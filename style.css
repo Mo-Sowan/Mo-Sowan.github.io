@@ -1,573 +1,720 @@
-/* ===== Theme tokens ===== */
-:root,
-:root[data-theme="dark"] {
-    --bg: #0b0d10;
-    --surface: #12161b;
-    --border: #232a33;
-    --text: #e6e9ee;
-    --muted: #9aa4b2;
-    --accent: #4fb3a9;
-    --accent-ink: #062320;
-    --todo: #e0a84f;
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+/* 
+=====================================================
+   GLOBAL VARIABLES & THEME SETTINGS
+=====================================================
+*/
+:root {
+    /* Main colors */
+    --bg-color: #030303;      /* Deep black background for the cinematic feel */
+    --text-color: #E1D9C1;    /* A slightly warm, premium off-white text color */
+    --text-muted: #888888;    /* Grey for secondary text */
+    --accent: #E1D9C1;        /* Color for borders and highlights */
+    
+    /* Typography settings tied to the Google Fonts imported in HTML */
+    --font-heading: 'Syncopate', sans-serif;
+    --font-body: 'Space Grotesk', sans-serif;
 }
 
-:root[data-theme="light"] {
-    --bg: #fafbfc;
-    --surface: #ffffff;
-    --border: #e1e5ea;
-    --text: #14181d;
-    --muted: #556070;
-    --accent: #1f7a71;
-    --accent-ink: #ffffff;
-    --todo: #9a5b00;
-    --shadow: 0 1px 3px rgba(20, 24, 29, 0.08);
-}
-
-/* ===== Base ===== */
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
+/* 
+=====================================================
+   RESET & BASE STYLES
+   (Removes default browser margins/padding)
+=====================================================
+*/
+* {
     margin: 0;
     padding: 0;
+    box-sizing: border-box; /* Ensures padding doesn't affect element widths */
 }
 
+/* Enables smooth scrolling when clicking navigation links */
 html {
     scroll-behavior: smooth;
-    scroll-padding-top: 5rem;
 }
 
 body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-    font-size: 1rem;
-    line-height: 1.65;
-    -webkit-font-smoothing: antialiased;
-    transition: background-color 0.2s, color 0.2s;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-body);
+    overflow-x: hidden; /* Prevents horizontal scrolling */
+    -webkit-font-smoothing: antialiased; /* Makes text look sharper on Mac/iOS */
+    cursor: none; /* Hides the default cursor for our custom one */
 }
 
-a {
-    color: inherit;
+a, button {
+    cursor: none; /* Hide cursor on interactive elements too */
 }
 
-img {
-    max-width: 100%;
-    display: block;
+/* Added dynamically to prevent scrolling while the preloader is visible */
+body.loading {
+    overflow: hidden;
 }
 
-ul,
-ol {
-    list-style: none;
-}
-
-strong {
-    font-weight: 600;
-    color: var(--text);
-}
-
-:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 3px;
-    border-radius: 4px;
-}
-
-.mono {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-}
-
-.container {
-    max-width: 1080px;
-    margin: 0 auto;
-    padding: 0 1.5rem;
-}
-
-.skip-link {
-    position: absolute;
-    left: 1rem;
-    top: -3rem;
-    background: var(--accent);
-    color: var(--accent-ink);
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    z-index: 200;
-}
-
-.skip-link:focus {
-    top: 1rem;
-}
-
-.todo {
-    color: var(--todo);
-    font-style: italic;
-}
-
-/* ===== Header ===== */
-.header {
-    position: sticky;
+/* 
+=====================================================
+   PRELOADER
+   (The black screen that shows before entering)
+=====================================================
+*/
+.preload {
+    position: fixed;
     top: 0;
-    z-index: 100;
-    background: color-mix(in srgb, var(--bg) 85%, transparent);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--border);
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000;
+    z-index: 9999; /* Keeps it on top of everything */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Fades out smoothly when the 'hidden' class is added via JS */
+    transition: opacity 1s ease-in-out, visibility 1s;
 }
 
-.header-inner {
+.preload.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.preload-content {
     display: flex;
+    flex-direction: column;
     align-items: center;
+    gap: 2rem;
+}
+
+/* The spinning circle animation */
+.spinner {
+    width: 100px;
+    height: 100px;
+    border: 2px solid transparent;
+    border-top: 2px solid var(--accent);
+    border-right: 2px solid var(--accent);
+    border-radius: 50%;
+    animation: spin 2s linear infinite; /* Runs infinitely */
+}
+
+/* Keyframes define how the animation moves */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* The "Enter The Universe" button */
+.enter-button {
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: var(--font-heading);
+    padding: 1rem 2.5rem;
+    font-size: 0.9rem;
+    letter-spacing: 3px;
+    cursor: none; /* use our custom cursor */
+    transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+    text-transform: uppercase;
+    opacity: 0.9;
+    position: relative;
+    overflow: hidden;
+    /* Continuous glowing pulse so it feels alive */
+    animation: buttonPulse 4s infinite alternate;
+}
+
+@keyframes buttonPulse {
+    0% { box-shadow: 0 0 5px rgba(225, 217, 193, 0.1); }
+    100% { box-shadow: 0 0 20px rgba(225, 217, 193, 0.6); }
+}
+
+.enter-button:hover {
+    background: var(--accent); /* Back to the solid previous color */
+    color: #000; /* Text turns black */
+    opacity: 1;
+    transform: scale(1.05); /* Slightly pops out */
+    box-shadow: 0 0 30px rgba(225, 217, 193, 0.8);
+    letter-spacing: 5px; /* Text spreads slightly */
+}
+
+/* The typewriter container */
+.typewriter {
+    display: inline-block;
+}
+
+#loading-text {
+    font-family: var(--font-heading);
+    color: var(--accent);
+    font-size: clamp(1rem, 3vw, 1.5rem);
+    letter-spacing: 2px;
+    border-right: 2px solid var(--accent);
+    white-space: nowrap;
+    overflow: hidden;
+    padding-right: 5px;
+    /* Cursor blink animation */
+    animation: blink-caret 1.5s step-end infinite;
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: var(--accent); }
+}
+
+/* 
+=====================================================
+   HEADER NAVIGATION
+=====================================================
+*/
+.header {
+    position: fixed; /* Sticks to the top of the screen */
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 2rem 4rem;
+    display: flex;
     justify-content: space-between;
-    height: 4rem;
-    gap: 1rem;
+    align-items: center;
+    z-index: 100;
+    /* This makes the header text invert its color if it overlaps with a white background */
+    mix-blend-mode: difference; 
 }
 
 .logo {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-weight: 500;
+    font-family: var(--font-heading);
+    color: var(--text-color);
     text-decoration: none;
-}
-
-.logo-accent {
-    color: var(--accent);
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
 }
 
 .nav {
     display: flex;
-    gap: 1.75rem;
+    gap: 2rem;
 }
 
 .nav a {
-    color: var(--muted);
+    color: var(--text-color);
     text-decoration: none;
-    font-size: 0.95rem;
-    transition: color 0.15s;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    position: relative;
 }
 
-.nav a:hover {
-    color: var(--text);
+/* The underline hover effect for navigation links */
+.nav a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0%; /* Starts with 0 width */
+    height: 1px;
+    background: var(--text-color);
+    transition: width 0.3s ease;
 }
 
-.header-actions {
+.nav a:hover::after {
+    width: 100%; /* Expands to full width on hover */
+}
+
+/* 
+=====================================================
+   HERO SECTION (Home)
+=====================================================
+*/
+.hero {
+    height: 100vh; /* Takes up full screen height */
+    position: relative;
     display: flex;
-    gap: 0.25rem;
-}
-
-.icon-btn {
-    display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 2.5rem;
-    height: 2.5rem;
-    border: 1px solid transparent;
-    border-radius: 8px;
-    background: transparent;
-    color: var(--muted);
-    cursor: pointer;
+    overflow: hidden;
 }
 
-.icon-btn:hover {
-    color: var(--text);
-    border-color: var(--border);
+/* The background image of the hero section */
+.hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+    background-size: cover;
+    background-position: center;
+    z-index: -2;
+    /* The pulse animation slowly scales and dims the background */
+    animation: pulseBg 20s infinite alternate linear;
 }
 
-.icon-btn svg {
-    width: 20px;
-    height: 20px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.8;
-    stroke-linecap: round;
+@keyframes pulseBg {
+    0% { transform: scale(1); filter: brightness(0.4) contrast(1.2); }
+    100% { transform: scale(1.1); filter: brightness(0.6) contrast(1.1); }
 }
 
-[data-theme="dark"] .icon-moon,
-[data-theme="light"] .icon-sun {
-    display: none;
+/* Dark gradient overlay so text remains readable over the image */
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, transparent 0%, #030303 80%);
+    z-index: -1;
 }
 
-.menu-btn {
-    display: none;
+.hero-content {
+    text-align: center;
+    animation: float 12s ease-in-out infinite; /* Continuous breathing/floating effect */
+    z-index: 10;
 }
 
-/* ===== Buttons ===== */
-.btn {
-    display: inline-block;
-    padding: 0.7rem 1.25rem;
-    border-radius: 8px;
-    font-weight: 500;
-    text-decoration: none;
-    border: 1px solid var(--border);
-    transition: transform 0.15s, background-color 0.15s, border-color 0.15s;
+/* The Shockwave Ring */
+.shockwave {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 4px solid var(--accent); /* Same color as the theme */
+    box-shadow: 0 0 50px var(--accent), inset 0 0 50px var(--accent);
+    opacity: 0; /* Hidden initially */
+    pointer-events: none;
+    z-index: -1; /* Behind the text */
 }
 
-.btn:hover {
-    transform: translateY(-1px);
+/* Activated by JS when button is pressed */
+.shockwave.explode {
+    /* Increased from 2s to 4s to make it disappear slower */
+    animation: blast 4s cubic-bezier(0.1, 1, 0.3, 1) forwards;
 }
 
-.btn-primary {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: var(--accent-ink);
+@keyframes blast {
+    0% {
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 1;
+        border-width: 10px;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(5);
+        opacity: 0;
+        border-width: 1px;
+    }
 }
 
-.btn-ghost:hover {
-    border-color: var(--muted);
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
 }
 
-/* ===== Hero ===== */
-.hero {
-    padding: 7rem 0 5rem;
-}
-
-.eyebrow {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    color: var(--accent);
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
-}
-
+/* Your massive name text */
 .hero-title {
-    font-size: clamp(2rem, 5vw, 3.4rem);
-    line-height: 1.15;
-    letter-spacing: -0.02em;
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 5vw, 4rem); /* Reduced significantly */
+    line-height: 1;
     font-weight: 700;
-    max-width: 18ch;
-}
-
-.hero-lead {
-    margin-top: 1.5rem;
-    max-width: 60ch;
-    font-size: 1.125rem;
-    color: var(--muted);
-}
-
-.hero-actions {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
+    flex-direction: column;
+    perspective: 1000px; /* Required for the 3D rotation entrance effect */
+}
+
+/* Adds a continuous metallic shine effect to the text */
+.hero-title .line {
+    display: block;
+    background: linear-gradient(90deg, #E1D9C1 0%, #888888 50%, #E1D9C1 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shine 8s linear infinite;
+}
+
+@keyframes shine {
+    to {
+        background-position: 200% center;
+    }
+}
+
+.hero-subtitle {
     margin-top: 2rem;
+    font-size: 1.2rem;
+    letter-spacing: 4px;
+    color: var(--text-color);
+    opacity: 0.8;
 }
 
-.hero-meta {
+/* The little animated scroll indicator at the bottom */
+.scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 1.5rem;
-    margin-top: 2.5rem;
-    font-size: 0.9rem;
-    color: var(--muted);
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    opacity: 0.6;
 }
 
-.hero-meta li {
+.scroll-indicator span {
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+}
+
+.scroll-indicator .line {
+    width: 1px;
+    height: 60px;
+    background: var(--text-color);
+    position: relative;
+    overflow: hidden;
+}
+
+/* The moving line animation inside the indicator */
+.scroll-indicator .line::after {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    animation: scrollLine 2s infinite;
+}
+
+@keyframes scrollLine {
+    0% { top: -100%; }
+    100% { top: 100%; }
+}
+
+/* 
+=====================================================
+   GENERAL LAYOUT UTILITIES
+=====================================================
+*/
+.container {
+    max-width: 1400px;
+    margin: 0 auto; /* Centers the container */
+    padding: 0 4rem;
+}
+
+section {
+    padding: 8rem 0; /* Huge padding for cinematic whitespace */
+}
+
+/* 
+=====================================================
+   MANIFESTO / ABOUT SECTION
+=====================================================
+*/
+.manifesto {
+    padding: 12rem 0;
+    background-color: var(--bg-color);
+    position: relative;
+}
+
+.manifesto-container {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 4rem;
 }
 
-.hero-meta a {
-    text-decoration: none;
+.anim-text {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.hero-meta a:hover {
-    color: var(--text);
-}
-
-.dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--accent);
-}
-
-/* ===== Sections ===== */
-.section {
-    padding: 5rem 0;
-    border-top: 1px solid var(--border);
-}
-
-.section-title {
-    display: flex;
-    align-items: baseline;
-    gap: 0.75rem;
-    font-size: 1.75rem;
-    letter-spacing: -0.01em;
-    margin-bottom: 2rem;
-}
-
-.section-num {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.9rem;
-    font-weight: 400;
-    color: var(--accent);
-}
-
-.section p + p {
-    margin-top: 1rem;
-}
-
-/* ===== About ===== */
-.about-grid {
-    display: grid;
-    grid-template-columns: 200px 1fr;
-    gap: 3rem;
-    align-items: start;
-}
-
-.about-grid p {
-    color: var(--muted);
-    max-width: 65ch;
+.profile-photo-wrapper.visible {
+    transform: translateY(0);
+    opacity: 1;
 }
 
 .profile-photo {
-    width: 200px;
-    height: 200px;
-    border-radius: 12px;
+    width: 300px;
+    height: 300px;
     object-fit: cover;
-    border: 1px solid var(--border);
+    border-radius: 50%;
+    border: 2px solid transparent;
+    transition: all 1.5s ease;
 }
 
-/* ===== Cards & tags ===== */
-.skills-grid,
-.projects-grid {
-    display: grid;
-    gap: 1.25rem;
+.profile-photo:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(225, 217, 193, 0.2);
 }
 
-.skills-grid {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+.manifesto-title {
+    font-family: var(--font-heading);
+    font-size: 1.5rem; /* Reduced from 2rem */
+    margin-bottom: 2rem;
+    color: var(--text-muted);
 }
 
-.projects-grid {
-    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+/* The large text block that fades in (handled by JS Intersection Observer) */
+.manifesto-text {
+    font-size: 1.2rem; /* Normal readable text size */
+    line-height: 1.6;
+    max-width: 700px;
+    transform: translateY(50px); /* Starts pushed down */
+    opacity: 0; /* Starts invisible */
+    transition: all 2.5s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: 0.2s; /* Slightly delayed after the photo */
 }
 
-.skill-card,
-.project-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: var(--shadow);
+/* Class added by Javascript when the element scrolls into view */
+.manifesto-text.visible {
+    transform: translateY(0);
+    opacity: 1;
 }
 
-.skill-card h3,
-.project-card h3 {
-    font-size: 1.05rem;
-    margin-bottom: 0.9rem;
+/* 
+=====================================================
+   CASES / PROJECTS SECTION
+=====================================================
+*/
+.section-heading {
+    margin-bottom: 6rem;
 }
 
-.tags {
+.section-heading h2 {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.section-heading p {
+    color: var(--text-muted);
+    font-size: 1.2rem;
+}
+
+.cases-list {
+    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Subtle top line */
+}
+
+/* Individual project row styling */
+.case-text-group {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
-.tags li {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.78rem;
-    padding: 0.2rem 0.55rem;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    color: var(--muted);
+.case-desc {
+    font-family: var(--font-body);
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    max-width: 600px;
 }
 
-.project-card {
+.case-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    text-decoration: none;
+    color: var(--text-color);
+    position: relative;
+    transition: padding-left 0.5s ease; /* Smooth indent on hover */
+}
+
+.case-item:hover {
+    padding-left: 2rem; /* Indents the text slightly */
+    color: #fff;
+}
+
+.case-details {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.case-num {
+    font-family: var(--font-body);
+    color: var(--text-muted);
+    font-size: 1.1rem;
+}
+
+.case-name {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    text-transform: uppercase;
+}
+
+.case-date {
+    font-family: var(--font-body);
+    color: var(--text-muted);
+    z-index: 2;
+}
+
+/* The floating background image that appears on hover */
+.case-image-hover {
+    position: absolute;
+    top: 50%;
+    right: 20%;
+    transform: translateY(-50%) scale(0.8); /* Starts slightly scaled down */
+    width: 400px;
+    height: 250px;
+    background-size: cover;
+    background-position: center;
+    opacity: 0; /* Hidden by default */
+    pointer-events: none; /* User clicks pass through it */
+    transition: all 1s ease-out; /* Smooth but much faster appearance */
+    z-index: 1;
+}
+
+.case-item:hover .case-image-hover {
+    opacity: 0.4; /* Fades in */
+    transform: translateY(-50%) scale(1); /* Pops to full size */
+}
+
+/* 
+=====================================================
+   CONTACT SECTION
+=====================================================
+*/
+.contact {
+    padding: 10rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 4rem;
+    margin-top: 4rem;
+}
+
+.contact-column {
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
-.project-card h3 {
-    margin-bottom: 0.15rem;
+.contact-label {
+    font-family: var(--font-heading);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    letter-spacing: 2px;
 }
 
-.project-kind {
-    font-size: 0.85rem;
-    color: var(--muted);
-}
-
-.project-facts {
-    display: grid;
-    gap: 0.2rem;
-    font-size: 0.93rem;
-}
-
-.project-facts dt {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--accent);
-    margin-top: 0.5rem;
-}
-
-.project-facts dd {
-    color: var(--muted);
-}
-
-.project-link {
-    margin-top: auto;
-    color: var(--accent);
+.contact-text, .contact-link {
+    font-size: 1.2rem;
+    color: var(--text-color);
     text-decoration: none;
-    font-weight: 500;
-    font-size: 0.93rem;
+    transition: color 1s;
 }
 
-.project-link:hover {
-    text-decoration: underline;
-}
-
-/* ===== Timeline ===== */
-.timeline {
-    border-left: 1px solid var(--border);
-    margin-left: 0.4rem;
-}
-
-.timeline-item {
-    position: relative;
-    display: grid;
-    grid-template-columns: 170px 1fr;
-    gap: 1.5rem;
-    padding: 0 0 2.5rem 2rem;
-}
-
-.timeline-item:last-child {
-    padding-bottom: 0;
-}
-
-.timeline-item::before {
-    content: '';
-    position: absolute;
-    left: -6px;
-    top: 0.45rem;
-    width: 11px;
-    height: 11px;
-    border-radius: 50%;
-    background: var(--bg);
-    border: 2px solid var(--accent);
-}
-
-.timeline-meta {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.85rem;
-    color: var(--muted);
-    padding-top: 0.15rem;
-}
-
-.timeline-body h3 {
-    font-size: 1.1rem;
-}
-
-.timeline-org {
+.contact-link:hover {
     color: var(--accent);
-    font-size: 0.93rem;
-    margin-bottom: 0.5rem;
 }
 
-.timeline-body p:not(.timeline-org) {
-    color: var(--muted);
-    max-width: 65ch;
-}
-
-.timeline-body p + p {
-    margin-top: 0.5rem;
-}
-
-/* ===== Contact ===== */
-.contact-lead {
-    color: var(--muted);
-    max-width: 55ch;
-    margin-bottom: 1.5rem;
-}
-
-.contact-links {
+/* Social links styling */
+.socials {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem 2rem;
-    margin-top: 2rem;
+    flex-direction: column;
+    gap: 1rem;
 }
 
-.contact-links a {
-    color: var(--muted);
+.socials a {
+    color: var(--text-color);
     text-decoration: none;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    transition: color 1s;
 }
 
-.contact-links a:hover {
-    color: var(--text);
+.socials a:hover {
+    color: var(--accent);
 }
 
-/* ===== Footer ===== */
+/* 
+=====================================================
+   FOOTER
+=====================================================
+*/
 .footer {
-    border-top: 1px solid var(--border);
-    padding: 1.75rem 0;
-    font-size: 0.85rem;
-    color: var(--muted);
+    padding: 2rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.footer-inner {
+.footer-bottom {
     display: flex;
     justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    letter-spacing: 1px;
 }
 
-/* ===== Responsive ===== */
-@media (max-width: 760px) {
-    .menu-btn {
-        display: inline-flex;
+/* 
+=====================================================
+   MOBILE RESPONSIVENESS
+   (Adjusts styles for screens smaller than 768px)
+=====================================================
+*/
+@media (max-width: 768px) {
+    .header {
+        padding: 1.5rem;
     }
-
     .nav {
-        display: none;
-        position: absolute;
-        top: 4rem;
-        left: 0;
-        right: 0;
+        display: none; /* Hides top nav on very small screens */
+    }
+    .container {
+        padding: 0 2rem;
+    }
+    .manifesto-container {
         flex-direction: column;
-        gap: 0;
-        background: var(--bg);
-        border-bottom: 1px solid var(--border);
-        padding: 0.5rem 1.5rem 1rem;
+        text-align: center;
+        gap: 2rem;
     }
-
-    .nav.open {
-        display: flex;
-    }
-
-    .nav a {
-        padding: 0.75rem 0;
-        font-size: 1rem;
-    }
-
-    .hero {
-        padding: 4rem 0 3.5rem;
-    }
-
-    .section {
-        padding: 3.5rem 0;
-    }
-
-    .about-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-
     .profile-photo {
-        width: 120px;
-        height: 120px;
+        width: 200px;
+        height: 200px;
     }
-
-    .timeline-item {
-        grid-template-columns: 1fr;
-        gap: 0.25rem;
-        padding-left: 1.5rem;
+    .contact-grid {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 3rem;
+    }
+    .case-image-hover {
+        display: none; /* Turn off hover images on mobile for performance/space */
+    }
+    .case-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
     }
 }
 
-@media (prefers-reduced-motion: reduce) {
-    html {
-        scroll-behavior: auto;
-    }
+/* 
+=====================================================
+   CUSTOM CURSOR
+=====================================================
+*/
+.cursor-dot {
+    width: 6px;
+    height: 6px;
+    background-color: var(--accent);
+    position: fixed;
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    z-index: 99999;
+    pointer-events: none; /* Ensures we can click through it */
+}
 
-    * {
-        transition: none !important;
-    }
+.cursor-outline {
+    width: 40px;
+    height: 40px;
+    border: 1px solid rgba(225, 217, 193, 0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    z-index: 99998;
+    pointer-events: none;
+    transition: width 1s ease, height 1s ease, background-color 1s ease;
 }

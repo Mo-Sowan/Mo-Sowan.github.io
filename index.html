@@ -1,250 +1,210 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mohammed Sowan | Backend Engineer (.NET, Fintech)</title>
-    <meta name="description" content="Mohammed Sowan is a backend engineer building banking and payment systems with C#, ASP.NET Core, Docker, RabbitMQ and Redis.">
-    <meta name="author" content="Mohammed Sowan">
-    <meta name="theme-color" content="#0b0d10">
-
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Mohammed Sowan | Backend Engineer (.NET, Fintech)">
-    <meta property="og:description" content="Backend engineer building banking and payment systems with C#, ASP.NET Core, Docker, RabbitMQ and Redis.">
-    <meta property="og:image" content="https://github.com/Mo-Sowan.png">
-    <meta name="twitter:card" content="summary">
-
-    <link rel="icon" href="favicon.svg" type="image/svg+xml">
-
+    <title>Mohammed Sowan | Parallel Universe</title>
+    
+    <!-- We are importing two Google Fonts here: 
+         'Syncopate' for the large, cinematic headings.
+         'Space Grotesk' for the body text and smaller details. -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="style.css?v=2">
-
-    <!-- Apply the saved theme before first paint to avoid a flash -->
-    <script>
-        try {
-            const saved = localStorage.getItem('theme');
-            if (saved) document.documentElement.dataset.theme = saved;
-        } catch (e) {}
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Link to our main stylesheet for all the visual styling -->
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <a class="skip-link" href="#main">Skip to content</a>
-
-    <header class="header">
-        <div class="container header-inner">
-            <a href="#top" class="logo">m.sowan<span class="logo-accent">()</span></a>
-            <nav class="nav" id="nav" aria-label="Main">
-                <a href="#about">About</a>
-                <a href="#skills">Skills</a>
-                <a href="#projects">Projects</a>
-                <a href="#experience">Experience</a>
-                <a href="#contact">Contact</a>
-            </nav>
-            <div class="header-actions">
-                <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch color theme">
-                    <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
-                    <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
-                </button>
-                <button class="icon-btn menu-btn" id="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-                </button>
+<!-- The 'loading' class prevents scrolling while the preloader is active -->
+<body class="loading">
+    <!-- CUSTOM CURSOR -->
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-outline" id="cursor-outline"></div>
+    
+    <!-- PRELOADER SECTION: 
+         An automated tech-themed preloader that fades out. -->
+    <div class="preload">
+        <div class="preload-content">
+            <div class="typewriter">
+                <h2 id="loading-text"></h2>
             </div>
+            <!-- The spinning circle element -->
+            <div class="spinner"></div>
+            <!-- Manual entry button -->
+            <button id="enter-btn" class="enter-button">ENTER THE UNIVERSE</button>
         </div>
+    </div>
+
+    <!-- HEADER NAVIGATION: 
+         This bar stays at the top of the screen as you scroll. -->
+    <header class="header">
+        <a href="#" class="logo">M.SOWAN</a>
+        <!-- The navigation links to different sections of the page based on their ID (e.g. href="#about") -->
+        <nav class="nav">
+            <a href="#about">ABOUT</a>
+            <a href="#experience">EXPERIENCE</a>
+            <a href="#contact">CONTACT</a>
+        </nav>
     </header>
 
-    <main id="main">
-        <section class="hero" id="top">
-            <div class="container">
-                <p class="eyebrow">Backend Engineer · Fintech</p>
-                <h1 class="hero-title">I build reliable backend systems for banking and payments.</h1>
-                <p class="hero-lead">
-                    I'm Mohammed Sowan, a backend engineer in Tripoli, Libya. I design and run services in
-                    <strong>C# and ASP.NET Core</strong>, with <strong>Docker</strong>, <strong>RabbitMQ</strong> and <strong>Redis</strong>,
-                    for payment services used by multiple banks.
-                </p>
-                <div class="hero-actions">
-                    <a href="#projects" class="btn btn-primary">View projects</a>
-                    <a href="#contact" class="btn btn-ghost">Get in touch</a>
-                </div>
-                <ul class="hero-meta" aria-label="Quick facts">
-                    <li><span class="dot" aria-hidden="true"></span>Tripoli, Libya</li>
-                    <li><a href="https://github.com/Mo-Sowan" target="_blank" rel="noopener">github.com/Mo-Sowan</a></li>
-                    <li><a href="mailto:msowan89@gmail.com">msowan89@gmail.com</a></li>
-                </ul>
+    <main data-scroll-container>
+        
+        <!-- HERO SECTION: 
+             This is the massive full-screen introduction. -->
+        <section class="hero" id="home">
+            <!-- The hero-bg holds the abstract background image that slowly pulses -->
+            <div class="hero-bg"></div>
+            <!-- The hero-overlay adds a dark radial gradient so the white text is easy to read over the background -->
+            <div class="hero-overlay"></div>
+            
+            <div class="hero-content" style="position: relative;">
+                <!-- The shockwave ring effect -->
+                <div class="shockwave"></div>
+                <h1 class="hero-title">
+                    <span class="line">MOHAMMED</span>
+                    <span class="line">SOWAN</span>
+                </h1>
+                <p class="hero-subtitle">ARCHITECT OF DIGITAL REALITIES</p>
+            </div>
+            
+            <!-- A subtle scroll indicator animation at the bottom to encourage the user to scroll down -->
+            <div class="scroll-indicator">
+                <span>SCROLL</span>
+                <div class="line"></div>
             </div>
         </section>
 
-        <section class="section" id="about">
-            <div class="container about-grid">
-                <img src="https://github.com/Mo-Sowan.png" alt="Portrait of Mohammed Sowan" class="profile-photo" width="240" height="240" loading="lazy">
-                <div>
-                    <h2 class="section-title"><span class="section-num">01</span>About</h2>
-                    <p>
-                        I work on the backend of fintech products: payment services, banking integrations and the
-                        APIs that connect them. My focus is on systems that stay correct under load: clear
-                        service boundaries, message-driven workflows with RabbitMQ, caching with Redis, and
-                        containerized deployments with Docker.
+        <!-- MANIFESTO / ABOUT SECTION: 
+             A bold, philosophical statement instead of a standard 'About Me' text block. -->
+        <section class="manifesto" id="about">
+            <div class="container manifesto-container">
+                <!-- User Profile Photo -->
+                <div class="profile-photo-wrapper anim-text">
+                    <!-- Fetching the profile photo from GitHub since LinkedIn blocks direct image links -->
+                    <img src="https://github.com/Mo-Sowan.png" alt="Mohammed Sowan" class="profile-photo">
+                </div>
+                <div class="manifesto-content">
+                    <h2 class="manifesto-title">I am a highly motivated Libyan professional</h2>
+                    <!-- The 'anim-text' class triggers a fade-in animation when this text scrolls into view -->
+                    <p class="manifesto-text anim-text">
+                        Based in Libya, I am a multi-disciplinary professional blending expertise in electrical engineering, software development, and education. Whether I am optimizing power systems in the energy sector, developing machine-learning applications, or mentoring the next generation, my work is defined by a relentless drive for excellence and a commitment to creating meaningful impact.
                     </p>
-                    <p>
-                        Before software, I worked as an electrical engineer in oil field operations. That taught me
-                        to care about reliability, safety and doing things properly the first time, habits I now apply to production code.
-                    </p>
-                    <p class="todo">[TODO: add one sentence on what you're looking for next, e.g. roles or collaboration]</p>
                 </div>
             </div>
         </section>
 
-        <section class="section" id="skills">
+        <!-- EXPERIENCE SECTION: 
+             A sleek, minimalistic list of your professional roles. -->
+        <section class="cases" id="experience">
             <div class="container">
-                <h2 class="section-title"><span class="section-num">02</span>Skills</h2>
-                <div class="skills-grid">
-                    <article class="skill-card">
-                        <h3>Backend</h3>
-                        <ul class="tags">
-                            <li>C#</li><li>ASP.NET Core</li><li>REST APIs</li><li>Entity Framework Core</li><li>JWT auth</li><li>xUnit</li>
-                        </ul>
-                    </article>
-                    <article class="skill-card">
-                        <h3>Messaging &amp; Caching</h3>
-                        <ul class="tags">
-                            <li>RabbitMQ</li><li>Redis</li><li>Event-driven workflows</li>
-                        </ul>
-                    </article>
-                    <article class="skill-card">
-                        <h3>DevOps</h3>
-                        <ul class="tags">
-                            <li>Docker</li><li>Docker Compose</li><li>Git</li><li>Postman</li>
-                        </ul>
-                    </article>
-                    <article class="skill-card">
-                        <h3>Databases</h3>
-                        <ul class="tags">
-                            <li>SQL Server</li><li>[TODO: others, e.g. PostgreSQL]</li>
-                        </ul>
-                    </article>
+                <div class="section-heading">
+                    <h2>WORK EXPERIENCE</h2>
+                    <p>I found my Parallel Universe and am ready to share my professional journey with you.</p>
+                </div>
+                
+                <!-- The container holding all the experience items -->
+                <div class="cases-list">
+                    
+                    <!-- Experience Item 1 -->
+                    <a href="#" class="case-item">
+                        <div class="case-image-hover" style="background-image: url('https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="case-details">
+                            <span class="case-num">[01]</span>
+                            <div class="case-text-group">
+                                <span class="case-name">ELECTRICAL ENGINEER</span>
+                                <p class="case-desc">Spearhead the maintenance and troubleshooting of complex electrical systems in demanding oil field operations. My focus is on ensuring equipment reliability, strict safety compliance, and efficient power distribution to support continuous, optimized energy production.</p>
+                            </div>
+                        </div>
+                        <span class="case-date">// AKAKOS OIL OPERATION</span>
+                    </a>
+                    
+                    <!-- Experience Item 2 -->
+                    <a href="#" class="case-item">
+                        <div class="case-image-hover" style="background-image: url('https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="case-details">
+                            <span class="case-num">[02]</span>
+                            <div class="case-text-group">
+                                <span class="case-name">ENGLISH TEACHER</span>
+                                <p class="case-desc">Deliver technical English and speaking-skills curriculum to professionals, notably within the National Oil Corporation's 7000+ program. I design custom lesson plans and lead dynamic classroom activities to empower adult learners.</p>
+                            </div>
+                        </div>
+                        <span class="case-date">// ALANDALUS CENTER</span>
+                    </a>
+
+                    <!-- Experience Item 3 -->
+                    <a href="#" class="case-item">
+                        <div class="case-image-hover" style="background-image: url('https://images.unsplash.com/photo-1544531586-fde5298cdd40?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="case-details">
+                            <span class="case-num">[03]</span>
+                            <div class="case-text-group">
+                                <span class="case-name">TRAINER OF TRAINERS</span>
+                                <p class="case-desc">Lead the Youth Empowerment Program by instructing fellow trainers and directly coordinating the safety protocol education of over 3,000 primary school students, driving community impact.</p>
+                            </div>
+                        </div>
+                        <span class="case-date">// MOOMKEN ORG</span>
+                    </a>
+                    
+                    <!-- Experience Item 4 -->
+                    <a href="#" class="case-item">
+                        <div class="case-image-hover" style="background-image: url('https://images.unsplash.com/photo-1466611653911-95081537e5b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="case-details">
+                            <span class="case-num">[04]</span>
+                            <div class="case-text-group">
+                                <span class="case-name">ENERGY AMBASSADOR</span>
+                                <p class="case-desc">Selected by the Ministry of Oil and Gas for the Energy Jeel Initiative. Undergoing specialized technical training in advanced oilfield technology and safety protocols to champion sustainable energy practices.</p>
+                            </div>
+                        </div>
+                        <span class="case-date">// JEEL INITIATIVE</span>
+                    </a>
+                    
                 </div>
             </div>
         </section>
 
-        <section class="section" id="projects">
+        <!-- CONTACT SECTION: 
+             A detailed and balanced footer area for communication. -->
+        <section class="contact" id="contact">
             <div class="container">
-                <h2 class="section-title"><span class="section-num">03</span>Projects</h2>
-                <div class="projects-grid">
-                    <article class="project-card">
-                        <header>
-                            <h3>Investly</h3>
-                            <p class="project-kind">Investment platform · personal project</p>
-                        </header>
-                        <dl class="project-facts">
-                            <dt>Problem</dt>
-                            <dd>[TODO: one line on the problem Investly solves for investors]</dd>
-                            <dt>My role</dt>
-                            <dd>Designed and built the ASP.NET Core API (auth, investments, portfolio summary, admin), plus a mobile app and an admin dashboard.</dd>
-                            <dt>Outcome</dt>
-                            <dd>[TODO: add outcome or metric]</dd>
-                        </dl>
-                        <ul class="tags">
-                            <li>ASP.NET Core</li><li>EF Core</li><li>SQL Server</li><li>JWT</li><li>Docker Compose</li><li>React Native</li><li>Next.js</li>
-                        </ul>
-                    </article>
-
-                    <article class="project-card">
-                        <header>
-                            <h3>Tilawa Hifdh</h3>
-                            <p class="project-kind">Quran recitation tracker · open source</p>
-                        </header>
-                        <dl class="project-facts">
-                            <dt>Problem</dt>
-                            <dd>Follow along with Quran recitation and track memorization revision, fully offline.</dd>
-                            <dt>My role</dt>
-                            <dd>Built the Flutter app with an on-device speech recognizer (FastConformer CTC, ONNX), and an ASP.NET Core API.</dd>
-                            <dt>Outcome</dt>
-                            <dd>[TODO: add outcome or metric]</dd>
-                        </dl>
-                        <ul class="tags">
-                            <li>ASP.NET Core</li><li>Flutter</li><li>ONNX</li>
-                        </ul>
-                        <a class="project-link" href="https://github.com/Mo-Sowan/tilawa-hifdh" target="_blank" rel="noopener">View on GitHub →</a>
-                    </article>
-
-                    <article class="project-card">
-                        <header>
-                            <h3>Mizan</h3>
-                            <p class="project-kind">University exam platform</p>
-                        </header>
-                        <dl class="project-facts">
-                            <dt>Problem</dt>
-                            <dd>Run secure university exams that keep working offline, Arabic-first.</dd>
-                            <dt>My role</dt>
-                            <dd>[TODO: describe your role]</dd>
-                            <dt>Outcome</dt>
-                            <dd>[TODO: add outcome or metric]</dd>
-                        </dl>
-                        <ul class="tags">
-                            <li>C#</li><li>.NET</li><li>[TODO: rest of stack]</li>
-                        </ul>
-                    </article>
+                <div class="section-heading">
+                    <h2>LET'S CONNECT</h2>
+                    <p>Whether you have a question, a project idea, or just want to say hi, I'd love to hear from you.</p>
                 </div>
-            </div>
-        </section>
-
-        <section class="section" id="experience">
-            <div class="container">
-                <h2 class="section-title"><span class="section-num">04</span>Experience</h2>
-                <ol class="timeline">
-                    <li class="timeline-item">
-                        <div class="timeline-meta">[TODO: start year] – Present</div>
-                        <div class="timeline-body">
-                            <h3>Backend Developer</h3>
-                            <p class="timeline-org">[TODO: company, or "Fintech company"]</p>
-                            <p>Build and maintain backend services for payment and banking products used by multiple banks, with C#, ASP.NET Core, Docker, RabbitMQ and Redis.</p>
-                            <p class="todo">[TODO: 2–3 concrete responsibilities or results]</p>
+                
+                <div class="contact-grid">
+                    <div class="contact-column">
+                        <span class="contact-label">LOCATION</span>
+                        <p class="contact-text">Tripoli, Libya</p>
+                    </div>
+                    
+                    <div class="contact-column">
+                        <span class="contact-label">GET IN TOUCH</span>
+                        <a href="mailto:msowan89@gmail.com" class="contact-link">msowan89@gmail.com</a>
+                        <a href="tel:+2180911349994" class="contact-link">+218 0911349994</a>
+                    </div>
+                    
+                    <div class="contact-column">
+                        <span class="contact-label">SOCIALS</span>
+                        <div class="socials">
+                            <a href="https://www.linkedin.com/in/mohammed-sowan-50a325237/" target="_blank">LINKEDIN</a>
+                            <a href="https://github.com/Mo-Sowan" target="_blank">GITHUB</a>
                         </div>
-                    </li>
-                    <li class="timeline-item">
-                        <div class="timeline-meta">[TODO: years]</div>
-                        <div class="timeline-body">
-                            <h3>Electrical Engineer</h3>
-                            <p class="timeline-org">Akakos Oil Operations</p>
-                            <p>Maintained and troubleshot electrical systems in oil field operations, with a focus on reliability and safety compliance.</p>
-                        </div>
-                    </li>
-                    <li class="timeline-item">
-                        <div class="timeline-meta">[TODO: years]</div>
-                        <div class="timeline-body">
-                            <h3>Technical English Instructor</h3>
-                            <p class="timeline-org">Alandalus Center</p>
-                            <p>Taught technical English and speaking skills to professionals, including in the National Oil Corporation's 7000+ program.</p>
-                        </div>
-                    </li>
-                </ol>
-            </div>
-        </section>
-
-        <section class="section contact" id="contact">
-            <div class="container">
-                <h2 class="section-title"><span class="section-num">05</span>Contact</h2>
-                <p class="contact-lead">Open to backend roles and interesting fintech problems. Email is the fastest way to reach me.</p>
-                <a class="btn btn-primary contact-cta" href="mailto:msowan89@gmail.com">msowan89@gmail.com</a>
-                <ul class="contact-links">
-                    <li><a href="https://www.linkedin.com/in/mohammed-sowan-50a325237/" target="_blank" rel="noopener">LinkedIn</a></li>
-                    <li><a href="https://github.com/Mo-Sowan" target="_blank" rel="noopener">GitHub</a></li>
-                    <li><a href="tel:+218911349994">+218 91 134 9994</a></li>
-                </ul>
+                    </div>
+                </div>
             </div>
         </section>
     </main>
 
+    <!-- FOOTER: Copyright info at the very bottom -->
     <footer class="footer">
-        <div class="container footer-inner">
-            <span>© <span id="year">2026</span> Mohammed Sowan</span>
-            <span class="mono">Backend Engineer · .NET</span>
+        <div class="container">
+            <div class="footer-bottom">
+                <span>© 2026 MOHAMMED SOWAN</span>
+                <span>SOFTWARE ARCHITECT</span>
+            </div>
         </div>
     </footer>
 
-    <script src="script.js?v=2"></script>
+    <!-- This script handles the preloader button, scroll animations, and parallax effect -->
+    <script src="script.js"></script>
 </body>
 </html>
