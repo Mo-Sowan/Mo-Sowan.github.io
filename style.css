@@ -709,10 +709,26 @@ section {
     height: 250px;
     background-size: cover;
     background-position: center;
+    /* One warm monochrome grade so every photo feels like part of the same film */
+    filter: grayscale(1) sepia(0.35) contrast(1.15) brightness(1.1);
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.6s var(--ease-out), transform 0.8s var(--ease-out);
     z-index: 1;
+}
+
+/* Hover on mouse devices; .active is the same state on touch screens (set in script.js) */
+.case-item.active {
+    padding-left: 2rem;
+}
+
+.case-item.active .case-name {
+    color: #fff;
+}
+
+.case-item.active .case-image-hover {
+    opacity: 0.45;
+    transform: translateY(-50%) scale(1);
 }
 
 @media (hover: hover) {
@@ -725,7 +741,7 @@ section {
     }
 
     .case-item:hover .case-image-hover {
-        opacity: 0.35;
+        opacity: 0.45;
         transform: translateY(-50%) scale(1);
     }
 }
@@ -882,7 +898,11 @@ html.has-cursor .cursor-outline {
 
 @media (max-width: 768px) {
     .header {
-        padding: 1rem 1.5rem;
+        padding: 1.25rem 1.5rem;
+    }
+
+    /* The blend would invert the open menu, so switch it off only while it's open */
+    .menu-open .header {
         mix-blend-mode: normal;
     }
 
@@ -967,8 +987,21 @@ html.has-cursor .cursor-outline {
         font-size: 1.05rem;
     }
 
+    /* Same reveal as desktop, but the photo fills the row behind the text */
     .case-image-hover {
-        display: none;
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        transform: scale(1.04);
+        -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 60%);
+        mask-image: linear-gradient(90deg, transparent 0%, #000 60%);
+    }
+
+    .case-item.active .case-image-hover,
+    .case-item:hover .case-image-hover {
+        opacity: 0.3;
+        transform: scale(1);
     }
 
     .case-item {
@@ -976,6 +1009,11 @@ html.has-cursor .cursor-outline {
         align-items: flex-start;
         gap: 1rem;
         padding: 2rem 0;
+    }
+
+    .case-item.active,
+    .case-item:hover {
+        padding-left: 0.75rem;
     }
 
     .case-details {

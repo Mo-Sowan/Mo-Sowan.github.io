@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- PRELOADER ---
-    // Types a line, then opens by itself. The button skips the wait.
+    // Types a line and waits for the ENTER button. Clicks anywhere else do nothing.
     // Shown once per browser session; skipped entirely for reduced motion.
     const preload = document.querySelector('.preload');
     const loadingText = document.getElementById('loading-text');
@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const hero = document.querySelector('.hero');
     const textToType = 'INITIALIZING PORTFOLIO...';
     let entered = false;
-    let autoEnterTimer;
 
     function seenThisSession() {
         try {
@@ -33,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function enter() {
         if (entered) return;
         entered = true;
-        clearTimeout(autoEnterTimer);
         try {
             sessionStorage.setItem('entered', '1');
         } catch (e) {}
@@ -59,18 +57,28 @@ document.addEventListener('DOMContentLoaded', () => {
             if (i < textToType.length) {
                 loadingText.textContent += textToType.charAt(i++);
                 setTimeout(typeWriter, 50);
-            } else {
-                autoEnterTimer = setTimeout(enter, 1400);
             }
         })();
 
         enterBtn.addEventListener('click', enter);
+        // Keyboard users can press Enter to go in, same as clicking the button
         document.addEventListener('keydown', (e) => {
-            if (!entered && (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape')) {
+            if (!entered && e.key === 'Enter') {
                 e.preventDefault();
                 enter();
             }
         });
+    }
+
+    // --- TOUCH SCREENS: the row in the middle of the screen lights up like a hover ---
+    const canHover = window.matchMedia('(hover: hover)').matches;
+
+    if (!canHover) {
+        const rowObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => entry.target.classList.toggle('active', entry.isIntersecting));
+        }, { rootMargin: '-49% 0px -49% 0px' });
+
+        document.querySelectorAll('.case-item').forEach((row) => rowObserver.observe(row));
     }
 
     // --- MOBILE MENU ---

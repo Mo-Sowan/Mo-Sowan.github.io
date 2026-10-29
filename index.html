@@ -20,7 +20,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="style.css?v=3">
+    <link rel="stylesheet" href="style.css?v=4">
 
     <!-- Lets CSS hide the hero before its entrance animation, without a flash -->
     <script>document.documentElement.classList.add('js');</script>
@@ -110,19 +110,23 @@
                 <dl class="stack-list">
                     <div class="stack-row">
                         <dt>BACKEND</dt>
-                        <dd>C# · ASP.NET Core · Entity Framework Core · REST APIs · JWT · xUnit</dd>
+                        <dd>C# · ASP.NET Core · Entity Framework Core · MediatR · FluentValidation · REST APIs · JWT</dd>
                     </div>
                     <div class="stack-row">
                         <dt>MESSAGING</dt>
-                        <dd>RabbitMQ · Redis · Event-driven workflows</dd>
+                        <dd>RabbitMQ · MassTransit · Redis · Hangfire · Quartz</dd>
                     </div>
                     <div class="stack-row">
                         <dt>DEVOPS</dt>
-                        <dd>Docker · Docker Compose · Git · Postman</dd>
+                        <dd>Docker · Docker Compose · OpenTelemetry · Serilog · Polly · Git</dd>
                     </div>
                     <div class="stack-row">
                         <dt>DATABASES</dt>
-                        <dd>SQL Server · <span class="todo">[TODO: other databases you use]</span></dd>
+                        <dd>SQL Server · PostgreSQL · Dapper · pgvector</dd>
+                    </div>
+                    <div class="stack-row">
+                        <dt>TESTING</dt>
+                        <dd>xUnit · Testcontainers · Postman</dd>
                     </div>
                 </dl>
             </div>
@@ -138,11 +142,11 @@
 
                 <div class="cases-list">
                     <article class="case-item">
-                        <div class="case-image-hover" aria-hidden="true" style="background-image: url('https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=800&q=70');"></div>
+                        <div class="case-image-hover" aria-hidden="true" style="background-image: url('https://images.unsplash.com/photo-1689732888407-310424e3a372?auto=format&fit=crop&w=900&q=75');"></div>
                         <div class="case-details">
                             <div class="case-text-group">
                                 <h3 class="case-name">INVESTLY</h3>
-                                <p class="case-desc">An investment platform. I built the ASP.NET Core API (auth, investments, portfolio summaries, admin) plus the mobile app and admin dashboard. <span class="todo">[TODO: the problem it solves, and an outcome]</span></p>
+                                <p class="case-desc">A crowdfunding platform for Libyan projects. Entrepreneurs publish projects, investors fund them, the money sits in a per-project escrow wallet, and profits flow back to investors as dividends. I built the ASP.NET Core API with real-time notifications, the mobile app, the admin dashboard and an AI service that writes Arabic/English project summaries.</p>
                                 <p class="case-tags">ASP.NET Core · EF Core · SQL Server · JWT · Docker Compose · React Native · Next.js</p>
                             </div>
                         </div>
@@ -150,7 +154,7 @@
                     </article>
 
                     <article class="case-item">
-                        <div class="case-image-hover" aria-hidden="true" style="background-image: url('https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=800&q=70');"></div>
+                        <div class="case-image-hover" aria-hidden="true" style="background-image: url('https://images.unsplash.com/photo-1791966740133-a5112f47dd50?auto=format&fit=crop&w=900&q=75');"></div>
                         <div class="case-details">
                             <div class="case-text-group">
                                 <h3 class="case-name"><a href="https://github.com/Mo-Sowan/tilawa-hifdh" target="_blank" rel="noopener">TILAWA HIFDH <span aria-hidden="true">↗</span></a></h3>
@@ -162,12 +166,12 @@
                     </article>
 
                     <article class="case-item">
-                        <div class="case-image-hover" aria-hidden="true" style="background-image: url('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=800&q=70');"></div>
+                        <div class="case-image-hover" aria-hidden="true" style="background-image: url('https://images.unsplash.com/photo-1786397685301-2421a92593ee?auto=format&fit=crop&w=900&q=75');"></div>
                         <div class="case-details">
                             <div class="case-text-group">
                                 <h3 class="case-name">MIZAN</h3>
-                                <p class="case-desc">A secure university exam platform: offline-capable and Arabic-first. <span class="todo">[TODO: your role and an outcome]</span></p>
-                                <p class="case-tags">C# · .NET · <span class="todo">[TODO: rest of stack]</span></p>
+                                <p class="case-desc">A secure exam platform for universities, Arabic-first. In lab mode, exams run on an on-campus edge server with no internet at all and sync back to the central system later. AI flags integrity signals with evidence, but a human makes every decision. Co-built with one other engineer.</p>
+                                <p class="case-tags">ASP.NET Core · EF Core · PostgreSQL · pgvector · Dapper · OpenTelemetry · Testcontainers</p>
                             </div>
                         </div>
                         <span class="case-date">// EXAM PLATFORM</span>
@@ -186,19 +190,19 @@
 
                 <ol class="cases-list">
                     <li class="case-item">
-                        <div class="case-image-hover" aria-hidden="true" style="background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=70');"></div>
+                        <div class="case-image-hover" aria-hidden="true" style="background-image: url('https://images.unsplash.com/photo-1680992046626-418f7e910589?auto=format&fit=crop&w=900&q=75');"></div>
                         <div class="case-details">
                             <span class="case-num">[01]</span>
                             <div class="case-text-group">
                                 <h3 class="case-name">BACKEND DEVELOPER</h3>
-                                <p class="case-desc">Build and maintain backend services for payment and banking products used by multiple banks, with C#, ASP.NET Core, Docker, RabbitMQ and Redis. <span class="todo">[TODO: 2–3 concrete results]</span></p>
+                                <p class="case-desc">Build and maintain the services behind payment and banking products used by multiple banks: bank integration adapters, cross-bank transfers, card services, mobile-banking APIs, back-office tools, reporting and document generation. Services talk through RabbitMQ and MassTransit, and are traced end to end with OpenTelemetry.</p>
                             </div>
                         </div>
-                        <span class="case-date">// FINTECH · <span class="todo">[TODO: years]</span></span>
+                        <span class="case-date">// FINTECH · 2024 – NOW</span>
                     </li>
 
                     <li class="case-item">
-                        <div class="case-image-hover" aria-hidden="true" style="background-image: url('https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?auto=format&fit=crop&w=800&q=70');"></div>
+                        <div class="case-image-hover" aria-hidden="true" style="background-image: url('https://images.unsplash.com/photo-1773097259159-4516125de504?auto=format&fit=crop&w=900&q=75');"></div>
                         <div class="case-details">
                             <span class="case-num">[02]</span>
                             <div class="case-text-group">
@@ -210,7 +214,7 @@
                     </li>
 
                     <li class="case-item">
-                        <div class="case-image-hover" aria-hidden="true" style="background-image: url('https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=800&q=70');"></div>
+                        <div class="case-image-hover" aria-hidden="true" style="background-image: url('https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=900&q=75');"></div>
                         <div class="case-details">
                             <span class="case-num">[03]</span>
                             <div class="case-text-group">
@@ -222,7 +226,7 @@
                     </li>
 
                     <li class="case-item">
-                        <div class="case-image-hover" aria-hidden="true" style="background-image: url('https://images.unsplash.com/photo-1544531586-fde5298cdd40?auto=format&fit=crop&w=800&q=70');"></div>
+                        <div class="case-image-hover" aria-hidden="true" style="background-image: url('https://images.unsplash.com/photo-1690711185682-58a7857eefdb?auto=format&fit=crop&w=900&q=75');"></div>
                         <div class="case-details">
                             <span class="case-num">[04]</span>
                             <div class="case-text-group">
@@ -234,7 +238,7 @@
                     </li>
 
                     <li class="case-item">
-                        <div class="case-image-hover" aria-hidden="true" style="background-image: url('https://images.unsplash.com/photo-1466611653911-95081537e5b7?auto=format&fit=crop&w=800&q=70');"></div>
+                        <div class="case-image-hover" aria-hidden="true" style="background-image: url('https://images.unsplash.com/photo-1791039624964-9f11e7c7cff1?auto=format&fit=crop&w=900&q=75');"></div>
                         <div class="case-details">
                             <span class="case-num">[05]</span>
                             <div class="case-text-group">
@@ -289,6 +293,6 @@
         </div>
     </footer>
 
-    <script src="script.js?v=3"></script>
+    <script src="script.js?v=4"></script>
 </body>
 </html>
