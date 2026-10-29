@@ -13,14 +13,14 @@
     <meta property="og:image" content="https://github.com/Mo-Sowan.png">
     <meta name="twitter:card" content="summary">
 
-    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="favicon.svg?v=2" type="image/svg+xml">
 
     <!-- 'Syncopate' for the cinematic headings, 'Space Grotesk' for body text -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="style.css?v=4">
+    <link rel="stylesheet" href="style.css?v=5">
 
     <!-- Lets CSS hide the hero before its entrance animation, without a flash -->
     <script>document.documentElement.classList.add('js');</script>
@@ -32,7 +32,10 @@
     <div class="cursor-dot" id="cursor-dot" aria-hidden="true"></div>
     <div class="cursor-outline" id="cursor-outline" aria-hidden="true"></div>
 
-    <!-- PRELOADER: types a line, then opens on its own; the button skips the wait -->
+    <!-- Starfield that carries the hero's universe down the whole page -->
+    <canvas id="stars" aria-hidden="true"></canvas>
+
+    <!-- PRELOADER: types a line and waits for the ENTER button -->
     <div class="preload" aria-hidden="true">
         <div class="preload-content">
             <div class="typewriter">
@@ -103,7 +106,7 @@
         <!-- STACK: grouped by area -->
         <section class="stack" id="stack">
             <div class="container">
-                <div class="section-heading">
+                <div class="section-heading" data-ghost="STACK">
                     <h2>STACK</h2>
                     <p>The tools I reach for in production.</p>
                 </div>
@@ -135,7 +138,7 @@
         <!-- SELECTED WORK -->
         <section class="cases" id="work">
             <div class="container">
-                <div class="section-heading">
+                <div class="section-heading" data-ghost="WORK">
                     <h2>SELECTED WORK</h2>
                     <p>Things I've built outside the day job.</p>
                 </div>
@@ -183,7 +186,7 @@
         <!-- EXPERIENCE: newest first -->
         <section class="cases" id="experience">
             <div class="container">
-                <div class="section-heading">
+                <div class="section-heading" data-ghost="JOURNEY">
                     <h2>WORK EXPERIENCE</h2>
                     <p>From power systems to payment systems.</p>
                 </div>
@@ -255,7 +258,7 @@
         <!-- CONTACT -->
         <section class="contact" id="contact">
             <div class="container">
-                <div class="section-heading">
+                <div class="section-heading" data-ghost="CONTACT">
                     <h2>LET'S CONNECT</h2>
                     <p>Backend roles, fintech problems, or just a hello. Email reaches me fastest.</p>
                 </div>
@@ -293,6 +296,6 @@
         </div>
     </footer>
 
-    <script src="script.js?v=4"></script>
+    <script src="script.js?v=5"></script>
 </body>
 </html>

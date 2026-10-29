@@ -495,14 +495,91 @@ section {
     padding: 8rem 0;
 }
 
+/* Keeps the oversized ghost words from causing sideways scroll */
+main > section {
+    overflow-x: clip;
+}
+
 .section-heading {
+    position: relative;
     margin-bottom: 5rem;
 }
 
+/* Huge outlined word behind each heading; script.js drifts it with scroll via --drift */
+.section-heading::before {
+    content: attr(data-ghost);
+    position: absolute;
+    top: 50%;
+    left: -0.06em;
+    transform: translate3d(var(--drift, 0px), -50%, 0);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: clamp(4.5rem, 15vw, 13rem);
+    line-height: 1;
+    white-space: nowrap;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(225, 217, 193, 0.09);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Same metallic shine as the hero name */
 .section-heading h2 {
     font-family: var(--font-heading);
     font-size: clamp(1.5rem, 3vw, 2rem);
     margin-bottom: 1rem;
+    width: fit-content;
+    background: linear-gradient(90deg, #E1D9C1 0%, #8f8b80 50%, #E1D9C1 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shine 8s linear infinite;
+}
+
+/* Starfield canvas, fixed behind everything */
+#stars {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -3;
+    pointer-events: none;
+}
+
+/* Rows slide in one after another (class added by script.js, so no-JS still shows content) */
+.reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 1s var(--ease-out), transform 1s var(--ease-out), padding-left 0.6s var(--ease-out);
+    transition-delay: var(--delay, 0s);
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: none;
+}
+
+/* A thin light sweeps along the divider when a row is hovered or active */
+.stack-row,
+.case-item {
+    background: linear-gradient(90deg, transparent, rgba(225, 217, 193, 0.55), transparent) no-repeat;
+    background-size: 30% 1px;
+    background-position: -40% 100%;
+}
+
+.case-item.active,
+.stack-row.active {
+    background-position: 140% 100%;
+    transition: background-position 1.4s var(--ease-out), padding-left 0.6s var(--ease-out), opacity 1s var(--ease-out), transform 1s var(--ease-out);
+}
+
+@media (hover: hover) {
+    .case-item:hover,
+    .stack-row:hover {
+        background-position: 140% 100%;
+        transition: background-position 1.4s var(--ease-out), padding-left 0.6s var(--ease-out), opacity 1s var(--ease-out), transform 1s var(--ease-out);
+    }
 }
 
 .section-heading p {

@@ -78,8 +78,123 @@ document.addEventListener('DOMContentLoaded', () => {
             entries.forEach((entry) => entry.target.classList.toggle('active', entry.isIntersecting));
         }, { rootMargin: '-49% 0px -49% 0px' });
 
-        document.querySelectorAll('.case-item').forEach((row) => rowObserver.observe(row));
+        document.querySelectorAll('.case-item, .stack-row').forEach((row) => rowObserver.observe(row));
     }
+
+    // --- STAGGERED ROW REVEALS ---
+    const rows = document.querySelectorAll('.stack-row, .case-item, .contact-column');
+
+    if (!reducedMotion) {
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+
+        rows.forEach((row) => {
+            // Delay grows with the row's position in its list, capped so long lists don't drag
+            const index = [...row.parentElement.children].indexOf(row);
+            row.style.setProperty('--delay', `${Math.min(index, 4) * 0.09}s`);
+            row.classList.add('reveal');
+            revealObserver.observe(row);
+        });
+    }
+
+    // --- GHOST WORDS drift sideways as their section passes ---
+    const headings = document.querySelectorAll('.section-heading[data-ghost]');
+
+    function driftGhosts() {
+        const mid = window.innerHeight / 2;
+        headings.forEach((heading) => {
+            const rect = heading.getBoundingClientRect();
+            if (rect.bottom < -200 || rect.top > window.innerHeight + 200) return;
+            heading.style.setProperty('--drift', `${((rect.top - mid) * -0.25).toFixed(1)}px`);
+        });
+    }
+
+    // --- STARFIELD ---
+    // Slow twinkling stars with a little scroll depth, and a rare shooting star.
+    const canvas = document.getElementById('stars');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+    let shooter = null;
+    let width = 0, height = 0, dpr = 1;
+
+    function buildStars() {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        const count = Math.min(160, Math.round((width * height) / 9000));
+        stars = Array.from({ length: count }, () => ({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            r: Math.random() * 1.1 + 0.25,
+            depth: Math.random() * 0.25 + 0.05,   // how strongly it moves with scroll
+            phase: Math.random() * Math.PI * 2,
+            speed: Math.random() * 0.0015 + 0.0005,
+        }));
+    }
+
+    function drawStars(time) {
+        ctx.clearRect(0, 0, width, height);
+        const scroll = window.scrollY;
+
+        for (const s of stars) {
+            const y = (((s.y - scroll * s.depth) % height) + height) % height;
+            const twinkle = reducedMotion ? 0.6 : 0.35 + 0.35 * Math.sin(time * s.speed + s.phase);
+            ctx.globalAlpha = twinkle;
+            ctx.fillStyle = '#E1D9C1';
+            ctx.beginPath();
+            ctx.arc(s.x, y, s.r, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        if (shooter) {
+            const progress = (time - shooter.start) / shooter.duration;
+            if (progress >= 1) {
+                shooter = null;
+            } else {
+                const x = shooter.x + shooter.dx * progress;
+                const y = shooter.y + shooter.dy * progress;
+                const tail = ctx.createLinearGradient(x, y, x - shooter.dx * 0.18, y - shooter.dy * 0.18);
+                tail.addColorStop(0, 'rgba(255, 248, 230, 0.9)');
+                tail.addColorStop(1, 'rgba(255, 248, 230, 0)');
+                ctx.globalAlpha = Math.sin(progress * Math.PI);
+                ctx.strokeStyle = tail;
+                ctx.lineWidth = 1.2;
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x - shooter.dx * 0.18, y - shooter.dy * 0.18);
+                ctx.stroke();
+            }
+        } else if (!reducedMotion && Math.random() < 0.0025) {
+            shooter = {
+                x: Math.random() * width * 0.7,
+                y: Math.random() * height * 0.4,
+                dx: width * 0.35,
+                dy: height * 0.25,
+                start: time,
+                duration: 1100,
+            };
+        }
+        ctx.globalAlpha = 1;
+    }
+
+    buildStars();
+    window.addEventListener('resize', buildStars);
+
+    (function frame(time) {
+        drawStars(time);
+        if (!reducedMotion) driftGhosts();
+        requestAnimationFrame(frame);
+    })(0);
 
     // --- MOBILE MENU ---
     const menuToggle = document.getElementById('menu-toggle');
