@@ -41,8 +41,12 @@ document.addEventListener('DOMContentLoaded', () => {
         audio.resume(); // browsers only allow sound after a click, which this is
         const source = audio.createBufferSource();
         source.buffer = dropSound;
-        source.connect(audio.destination);
-        source.start(audio.currentTime + 0.3); // the same 300ms delay as the hero reveal below
+        const volume = audio.createGain();
+        volume.gain.value = 2; // the recording is quiet (peaks around 0.4)
+        source.connect(volume).connect(audio.destination);
+        // The drop hits ~0.04s into the file, so start early enough that it lands
+        // with the hero reveal 300ms after the click
+        source.start(audio.currentTime + 0.26);
     }
 
     function enter() {
