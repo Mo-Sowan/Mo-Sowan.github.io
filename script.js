@@ -21,9 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const textToType = 'INITIALIZING PORTFOLIO...';
     let entered = false;
 
-    // Entrance sound: a water drop, synthesized with Web Audio (no audio file to download).
-    // It lands as the name appears and the shockwave ring spreads like a ripple,
-    // with a softer second drop as the ring fades.
+    // Entrance sound: one deep water drop, synthesized with Web Audio (no audio file to download).
+    // It lands as the name appears, and its echo fades over the same 4s the shockwave ring
+    // takes to spread out and vanish.
     function playEntranceSound() {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         if (!AudioCtx) return;
@@ -31,48 +31,51 @@ document.addEventListener('DOMContentLoaded', () => {
         const audio = new AudioCtx();
         audio.resume();
         const impact = audio.currentTime + 0.35; // matches the 300ms delay before the hero reveal
+        const ringDuration = 4;                   // matches the shockwave 'blast' animation
 
-        // Room echo: a short decaying-noise impulse gives the drop a sense of space
+        // Cavern echo: a long, dark tail that dies away with the ring
         const echo = audio.createConvolver();
-        const tail = audio.createBuffer(2, audio.sampleRate * 2.5, audio.sampleRate);
+        const tail = audio.createBuffer(2, audio.sampleRate * ringDuration, audio.sampleRate);
         for (let ch = 0; ch < 2; ch++) {
             const samples = tail.getChannelData(ch);
             for (let i = 0; i < samples.length; i++) {
-                samples[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / samples.length, 3);
+                samples[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / samples.length, 2.5);
             }
         }
         echo.buffer = tail;
 
-        const dry = audio.createGain();
-        dry.gain.value = 0.8;
-        const wet = audio.createGain();
-        wet.gain.value = 0.45;
-        dry.connect(audio.destination);
-        echo.connect(wet).connect(audio.destination);
+        const darken = audio.createBiquadFilter();
+        darken.type = 'lowpass';
+        darken.frequency.value = 1400;
 
-        // A drop is a short sine whose pitch rises quickly as the bubble collapses
-        function drop(at, from, to, volume) {
+        const dry = audio.createGain();
+        dry.gain.value = 0.75;
+        const wet = audio.createGain();
+        wet.gain.value = 0.7;
+        dry.connect(audio.destination);
+        echo.connect(darken).connect(wet).connect(audio.destination);
+
+        // The drop: a low tone whose pitch swoops up as the bubble closes.
+        // A quiet overtone an octave up lets laptop and phone speakers carry it.
+        [[1, 0.8], [2, 0.18]].forEach(([multiple, volume]) => {
             const osc = audio.createOscillator();
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(from, at);
-            osc.frequency.exponentialRampToValueAtTime(to, at + 0.07);
+            osc.frequency.setValueAtTime(150 * multiple, impact);
+            osc.frequency.exponentialRampToValueAtTime(460 * multiple, impact + 0.14);
 
             const gain = audio.createGain();
-            gain.gain.setValueAtTime(0.0001, at);
-            gain.gain.exponentialRampToValueAtTime(volume, at + 0.004);
-            gain.gain.exponentialRampToValueAtTime(0.0001, at + 0.22);
+            gain.gain.setValueAtTime(0.0001, impact);
+            gain.gain.exponentialRampToValueAtTime(volume, impact + 0.006);
+            gain.gain.exponentialRampToValueAtTime(0.0001, impact + 0.6);
 
             osc.connect(gain);
             gain.connect(dry);
             gain.connect(echo);
-            osc.start(at);
-            osc.stop(at + 0.25);
-        }
+            osc.start(impact);
+            osc.stop(impact + 0.65);
+        });
 
-        drop(impact, 520, 1650, 0.55);
-        drop(impact + 0.55, 680, 2100, 0.18);
-
-        setTimeout(() => audio.close(), 4000);
+        setTimeout(() => audio.close(), (ringDuration + 1) * 1000);
     }
 
     function enter() {
