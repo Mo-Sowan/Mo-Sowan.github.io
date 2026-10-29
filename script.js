@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- PRELOADER ---
     // Types a line and waits for the ENTER button. Clicks anywhere else do nothing.
-    // Shown once per browser session; skipped entirely for reduced motion.
+    // Shown on every visit, so the entrance (and its sound) always plays.
     const preload = document.querySelector('.preload');
     const loadingText = document.getElementById('loading-text');
     const enterBtn = document.getElementById('enter-btn');
@@ -21,75 +21,85 @@ document.addEventListener('DOMContentLoaded', () => {
     const textToType = 'INITIALIZING PORTFOLIO...';
     let entered = false;
 
-    function seenThisSession() {
-        try {
-            return sessionStorage.getItem('entered') === '1';
-        } catch (e) {
-            return false;
-        }
-    }
-
     // Cinematic entrance sound, synthesized with Web Audio (no audio file to download).
-    // A rising whoosh, then a deep boom and a soft chord as the name lands with the shockwave.
+    // A rising whoosh, an impact as the name lands with the shockwave, then a bright chord.
+    // Pitched so laptop and phone speakers can play it, not just headphones.
     function playEntranceSound() {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         if (!AudioCtx) return;
 
         const audio = new AudioCtx();
+        audio.resume();
         const now = audio.currentTime;
         const impact = now + 0.35; // matches the 300ms delay before the hero reveal
 
         const master = audio.createGain();
-        master.gain.value = 0.8;
+        master.gain.value = 1;
         const limiter = audio.createDynamicsCompressor();
+        limiter.threshold.value = -10;
         master.connect(limiter).connect(audio.destination);
 
-        // Whoosh: filtered noise sweeping upward into the impact
-        const noiseBuffer = audio.createBuffer(1, audio.sampleRate * 2.5, audio.sampleRate);
-        const samples = noiseBuffer.getChannelData(0);
-        for (let i = 0; i < samples.length; i++) samples[i] = Math.random() * 2 - 1;
+        function noiseBuffer(seconds) {
+            const buffer = audio.createBuffer(1, audio.sampleRate * seconds, audio.sampleRate);
+            const samples = buffer.getChannelData(0);
+            for (let i = 0; i < samples.length; i++) samples[i] = Math.random() * 2 - 1;
+            return buffer;
+        }
 
-        const noise = audio.createBufferSource();
-        noise.buffer = noiseBuffer;
+        function envelope(gainNode, start, peak, attack, release) {
+            gainNode.gain.setValueAtTime(0.0001, start);
+            gainNode.gain.exponentialRampToValueAtTime(peak, start + attack);
+            gainNode.gain.exponentialRampToValueAtTime(0.0001, start + attack + release);
+        }
+
+        // Whoosh: noise sweeping upward into the impact
+        const whoosh = audio.createBufferSource();
+        whoosh.buffer = noiseBuffer(2);
         const sweep = audio.createBiquadFilter();
         sweep.type = 'bandpass';
-        sweep.Q.value = 1.2;
-        sweep.frequency.setValueAtTime(250, now);
-        sweep.frequency.exponentialRampToValueAtTime(2400, impact);
-        sweep.frequency.exponentialRampToValueAtTime(300, now + 2.2);
-        const noiseGain = audio.createGain();
-        noiseGain.gain.setValueAtTime(0.0001, now);
-        noiseGain.gain.exponentialRampToValueAtTime(0.35, impact);
-        noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 2.2);
-        noise.connect(sweep).connect(noiseGain).connect(master);
-        noise.start(now);
-        noise.stop(now + 2.5);
+        sweep.Q.value = 0.9;
+        sweep.frequency.setValueAtTime(400, now);
+        sweep.frequency.exponentialRampToValueAtTime(4500, impact);
+        sweep.frequency.exponentialRampToValueAtTime(500, impact + 1.4);
+        const whooshGain = audio.createGain();
+        envelope(whooshGain, now, 0.6, 0.35, 1.4);
+        whoosh.connect(sweep).connect(whooshGain).connect(master);
+        whoosh.start(now);
 
-        // Boom: a sine that drops in pitch, felt more than heard
-        const boom = audio.createOscillator();
-        boom.type = 'sine';
-        boom.frequency.setValueAtTime(110, impact);
-        boom.frequency.exponentialRampToValueAtTime(32, impact + 1.6);
-        const boomGain = audio.createGain();
-        boomGain.gain.setValueAtTime(0.0001, impact);
-        boomGain.gain.exponentialRampToValueAtTime(0.9, impact + 0.02);
-        boomGain.gain.exponentialRampToValueAtTime(0.0001, impact + 2);
-        boom.connect(boomGain).connect(master);
-        boom.start(impact);
-        boom.stop(impact + 2.1);
+        // Impact: a falling tone plus an overtone an octave up that small speakers can reproduce
+        [['sine', 180, 48, 1.0], ['triangle', 360, 96, 0.45]].forEach(([type, from, to, peak]) => {
+            const osc = audio.createOscillator();
+            osc.type = type;
+            osc.frequency.setValueAtTime(from, impact);
+            osc.frequency.exponentialRampToValueAtTime(to, impact + 1.2);
+            const gain = audio.createGain();
+            envelope(gain, impact, peak, 0.01, 1.6);
+            osc.connect(gain).connect(master);
+            osc.start(impact);
+            osc.stop(impact + 1.8);
+        });
 
-        // Chord: a soft, slowly fading pad as the name settles
-        [220, 329.63, 440, 659.25].forEach((freq, i) => {
+        // Thump: a short burst of noise for the hit's attack
+        const thump = audio.createBufferSource();
+        thump.buffer = noiseBuffer(0.4);
+        const thumpFilter = audio.createBiquadFilter();
+        thumpFilter.type = 'lowpass';
+        thumpFilter.frequency.value = 1500;
+        const thumpGain = audio.createGain();
+        envelope(thumpGain, impact, 0.7, 0.005, 0.3);
+        thump.connect(thumpFilter).connect(thumpGain).connect(master);
+        thump.start(impact);
+
+        // Chord: a bright A-major shimmer that rings out as the name settles
+        [440, 554.37, 659.25, 880].forEach((freq, i) => {
             const tone = audio.createOscillator();
-            tone.type = 'sine';
+            tone.type = 'triangle';
             tone.frequency.value = freq;
-            const toneGain = audio.createGain();
-            toneGain.gain.setValueAtTime(0.0001, impact);
-            toneGain.gain.exponentialRampToValueAtTime(0.06 / (i + 1), impact + 0.6);
-            toneGain.gain.exponentialRampToValueAtTime(0.0001, impact + 4);
-            tone.connect(toneGain).connect(master);
-            tone.start(impact);
-            tone.stop(impact + 4.1);
+            const gain = audio.createGain();
+            envelope(gain, impact + 0.05, 0.14 / (1 + i * 0.5), 0.35, 3.2);
+            tone.connect(gain).connect(master);
+            tone.start(impact + 0.05);
+            tone.stop(impact + 3.8);
         });
 
         setTimeout(() => audio.close(), 5000);
@@ -98,9 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function enter() {
         if (entered) return;
         entered = true;
-        try {
-            sessionStorage.setItem('entered', '1');
-        } catch (e) {}
 
         try {
             playEntranceSound();
@@ -116,29 +123,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 300);
     }
 
-    if (reducedMotion || seenThisSession()) {
-        preload.remove();
-        body.classList.remove('loading');
-        hero.classList.add('revealed');
-        entered = true;
-    } else {
-        let i = 0;
-        (function typeWriter() {
-            if (i < textToType.length) {
-                loadingText.textContent += textToType.charAt(i++);
-                setTimeout(typeWriter, 50);
-            }
-        })();
+    let typed = 0;
+    (function typeWriter() {
+        if (typed < textToType.length) {
+            loadingText.textContent += textToType.charAt(typed++);
+            setTimeout(typeWriter, 50);
+        }
+    })();
 
-        enterBtn.addEventListener('click', enter);
-        // Keyboard users can press Enter to go in, same as clicking the button
-        document.addEventListener('keydown', (e) => {
-            if (!entered && e.key === 'Enter') {
-                e.preventDefault();
-                enter();
-            }
-        });
-    }
+    enterBtn.addEventListener('click', enter);
+    // Keyboard users can press Enter to go in, same as clicking the button
+    document.addEventListener('keydown', (e) => {
+        if (!entered && e.key === 'Enter') {
+            e.preventDefault();
+            enter();
+        }
+    });
 
     // --- TOUCH SCREENS: the row in the middle of the screen lights up like a hover ---
     const canHover = window.matchMedia('(hover: hover)').matches;
