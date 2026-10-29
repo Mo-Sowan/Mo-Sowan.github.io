@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- PRELOADER ---
     // Types a line and waits for the ENTER button. Clicks anywhere else do nothing.
-    // Shown on every visit, so the entrance (and its sound) always plays.
+    // Shown on every visit, so the entrance always plays.
     const preload = document.querySelector('.preload');
     const loadingText = document.getElementById('loading-text');
     const enterBtn = document.getElementById('enter-btn');
@@ -21,41 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const textToType = 'INITIALIZING PORTFOLIO...';
     let entered = false;
 
-    // Entrance sound: a real water-drop recording (sounds/water-drop.mp3), decoded ahead of
-    // time and scheduled to land exactly as the name and shockwave appear.
-    // If the file is missing, the entrance simply plays silently.
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    const audio = AudioCtx ? new AudioCtx() : null;
-    let dropSound = null;
-
-    if (audio) {
-        fetch('sounds/water-drop.mp3')
-            .then((response) => (response.ok ? response.arrayBuffer() : Promise.reject()))
-            .then((data) => audio.decodeAudioData(data))
-            .then((buffer) => { dropSound = buffer; })
-            .catch(() => {});
-    }
-
-    function playEntranceSound() {
-        if (!audio || !dropSound) return;
-        audio.resume(); // browsers only allow sound after a click, which this is
-        const source = audio.createBufferSource();
-        source.buffer = dropSound;
-        const volume = audio.createGain();
-        volume.gain.value = 2; // the recording is quiet (peaks around 0.4)
-        source.connect(volume).connect(audio.destination);
-        // The drop hits ~0.04s into the file, so start early enough that it lands
-        // with the hero reveal 300ms after the click
-        source.start(audio.currentTime + 0.26);
-    }
-
     function enter() {
         if (entered) return;
         entered = true;
-
-        try {
-            playEntranceSound();
-        } catch (e) {}
 
         preload.classList.add('hidden');
         body.classList.remove('loading');
