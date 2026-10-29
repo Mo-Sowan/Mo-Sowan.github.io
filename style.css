@@ -1,74 +1,117 @@
-/* 
+/*
 =====================================================
    GLOBAL VARIABLES & THEME SETTINGS
 =====================================================
 */
 :root {
-    /* Main colors */
     --bg-color: #030303;      /* Deep black background for the cinematic feel */
-    --text-color: #E1D9C1;    /* A slightly warm, premium off-white text color */
-    --text-muted: #888888;    /* Grey for secondary text */
-    --accent: #E1D9C1;        /* Color for borders and highlights */
-    
-    /* Typography settings tied to the Google Fonts imported in HTML */
+    --text-color: #E1D9C1;    /* Warm, premium off-white */
+    --text-muted: #8f8b80;    /* Warm grey for secondary text (5.9:1 on black) */
+    --accent: #E1D9C1;        /* Borders and highlights */
+    --hairline: rgba(225, 217, 193, 0.12);
+    --todo: #d9a35b;          /* Marks content that still needs filling in */
+
     --font-heading: 'Syncopate', sans-serif;
     --font-body: 'Space Grotesk', sans-serif;
+
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* 
+/*
 =====================================================
    RESET & BASE STYLES
-   (Removes default browser margins/padding)
 =====================================================
 */
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box; /* Ensures padding doesn't affect element widths */
+    box-sizing: border-box;
 }
 
-/* Enables smooth scrolling when clicking navigation links */
 html {
     scroll-behavior: smooth;
+    scroll-padding-top: 6rem; /* Keeps section titles clear of the fixed header */
 }
 
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
     font-family: var(--font-body);
-    overflow-x: hidden; /* Prevents horizontal scrolling */
-    -webkit-font-smoothing: antialiased; /* Makes text look sharper on Mac/iOS */
-    cursor: none; /* Hides the default cursor for our custom one */
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
 }
 
-a, button {
-    cursor: none; /* Hide cursor on interactive elements too */
-}
-
-/* Added dynamically to prevent scrolling while the preloader is visible */
 body.loading {
     overflow: hidden;
 }
 
-/* 
+/* The custom cursor replaces the native one only when a precise mouse is present */
+html.has-cursor body,
+html.has-cursor a,
+html.has-cursor button {
+    cursor: none;
+}
+
+a {
+    color: inherit;
+}
+
+ol, ul {
+    list-style: none;
+}
+
+h1, h2, h3 {
+    text-wrap: balance;
+}
+
+::selection {
+    background: var(--accent);
+    color: var(--bg-color);
+}
+
+:focus-visible {
+    outline: 1px solid var(--accent);
+    outline-offset: 6px;
+}
+
+.skip-link {
+    position: fixed;
+    top: -4rem;
+    left: 1.5rem;
+    z-index: 10001;
+    padding: 0.75rem 1.25rem;
+    background: var(--accent);
+    color: var(--bg-color);
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-decoration: none;
+}
+
+.skip-link:focus {
+    top: 1.5rem;
+}
+
+.todo {
+    color: var(--todo);
+    font-style: italic;
+}
+
+/*
 =====================================================
    PRELOADER
-   (The black screen that shows before entering)
 =====================================================
 */
 .preload {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
+    inset: 0;
     background-color: #000;
-    z-index: 9999; /* Keeps it on top of everything */
+    z-index: 9999;
     display: flex;
     justify-content: center;
     align-items: center;
-    /* Fades out smoothly when the 'hidden' class is added via JS */
-    transition: opacity 1s ease-in-out, visibility 1s;
+    transition: opacity 1s ease-out, visibility 1s;
 }
 
 .preload.hidden {
@@ -81,9 +124,9 @@ body.loading {
     flex-direction: column;
     align-items: center;
     gap: 2rem;
+    padding: 0 1.5rem;
 }
 
-/* The spinning circle animation */
 .spinner {
     width: 100px;
     height: 100px;
@@ -91,16 +134,13 @@ body.loading {
     border-top: 2px solid var(--accent);
     border-right: 2px solid var(--accent);
     border-radius: 50%;
-    animation: spin 2s linear infinite; /* Runs infinitely */
+    animation: spin 2s linear infinite;
 }
 
-/* Keyframes define how the animation moves */
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    to { transform: rotate(360deg); }
 }
 
-/* The "Enter The Universe" button */
 .enter-button {
     background: transparent;
     border: 1px solid var(--accent);
@@ -109,13 +149,10 @@ body.loading {
     padding: 1rem 2.5rem;
     font-size: 0.9rem;
     letter-spacing: 3px;
-    cursor: none; /* use our custom cursor */
-    transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+    transition: all 0.8s var(--ease-out);
     text-transform: uppercase;
     opacity: 0.9;
-    position: relative;
-    overflow: hidden;
-    /* Continuous glowing pulse so it feels alive */
     animation: buttonPulse 4s infinite alternate;
 }
 
@@ -124,45 +161,41 @@ body.loading {
     100% { box-shadow: 0 0 20px rgba(225, 217, 193, 0.6); }
 }
 
-.enter-button:hover {
-    background: var(--accent); /* Back to the solid previous color */
-    color: #000; /* Text turns black */
-    opacity: 1;
-    transform: scale(1.05); /* Slightly pops out */
-    box-shadow: 0 0 30px rgba(225, 217, 193, 0.8);
-    letter-spacing: 5px; /* Text spreads slightly */
-}
-
-/* The typewriter container */
-.typewriter {
-    display: inline-block;
+@media (hover: hover) {
+    .enter-button:hover {
+        background: var(--accent);
+        color: #000;
+        opacity: 1;
+        transform: scale(1.05);
+        box-shadow: 0 0 30px rgba(225, 217, 193, 0.8);
+        letter-spacing: 5px;
+    }
 }
 
 #loading-text {
     font-family: var(--font-heading);
     color: var(--accent);
-    font-size: clamp(1rem, 3vw, 1.5rem);
+    font-size: clamp(0.85rem, 3vw, 1.5rem);
     letter-spacing: 2px;
     border-right: 2px solid var(--accent);
     white-space: nowrap;
-    overflow: hidden;
     padding-right: 5px;
-    /* Cursor blink animation */
+    min-height: 1.5em;
     animation: blink-caret 1.5s step-end infinite;
 }
 
 @keyframes blink-caret {
-  from, to { border-color: transparent }
-  50% { border-color: var(--accent); }
+    from, to { border-color: transparent; }
+    50% { border-color: var(--accent); }
 }
 
-/* 
+/*
 =====================================================
    HEADER NAVIGATION
 =====================================================
 */
 .header {
-    position: fixed; /* Sticks to the top of the screen */
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -171,8 +204,7 @@ body.loading {
     justify-content: space-between;
     align-items: center;
     z-index: 100;
-    /* This makes the header text invert its color if it overlaps with a white background */
-    mix-blend-mode: difference; 
+    mix-blend-mode: difference; /* Inverts over light imagery */
 }
 
 .logo {
@@ -192,36 +224,68 @@ body.loading {
 .nav a {
     color: var(--text-color);
     text-decoration: none;
-    font-family: var(--font-body);
-    font-size: 0.9rem;
-    letter-spacing: 1px;
-    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1.5px;
     position: relative;
 }
 
-/* The underline hover effect for navigation links */
 .nav a::after {
     content: '';
     position: absolute;
     bottom: -5px;
     left: 0;
-    width: 0%; /* Starts with 0 width */
+    width: 100%;
     height: 1px;
     background: var(--text-color);
-    transition: width 0.3s ease;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s var(--ease-out);
 }
 
-.nav a:hover::after {
-    width: 100%; /* Expands to full width on hover */
+.nav a:focus-visible::after {
+    transform: scaleX(1);
 }
 
-/* 
+@media (hover: hover) {
+    .nav a:hover::after {
+        transform: scaleX(1);
+    }
+}
+
+/* Two-line burger, only visible on small screens */
+.menu-toggle {
+    display: none;
+    width: 44px;
+    height: 44px;
+    background: none;
+    border: 0;
+    position: relative;
+    cursor: pointer;
+}
+
+.menu-toggle span {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    height: 1px;
+    background: var(--text-color);
+    transition: transform 0.4s var(--ease-out);
+}
+
+.menu-toggle span:first-child { top: 18px; }
+.menu-toggle span:last-child { top: 26px; }
+
+.menu-open .menu-toggle span:first-child { transform: translateY(4px) rotate(45deg); }
+.menu-open .menu-toggle span:last-child { transform: translateY(-4px) rotate(-45deg); }
+
+/*
 =====================================================
-   HERO SECTION (Home)
+   HERO SECTION
 =====================================================
 */
 .hero {
-    height: 100vh; /* Takes up full screen height */
+    height: 100vh;
+    height: 100svh; /* Avoids the jump when mobile browser bars show/hide */
     position: relative;
     display: flex;
     align-items: center;
@@ -229,18 +293,22 @@ body.loading {
     overflow: hidden;
 }
 
-/* The background image of the hero section */
 .hero-bg {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+    inset: 0;
+    background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1920&q=70');
     background-size: cover;
     background-position: center;
     z-index: -2;
-    /* The pulse animation slowly scales and dims the background */
+    will-change: transform;
+}
+
+/* Scale/brightness pulse lives on a pseudo-element so it doesn't fight the JS parallax transform */
+.hero-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: inherit;
     animation: pulseBg 20s infinite alternate linear;
 }
 
@@ -249,24 +317,21 @@ body.loading {
     100% { transform: scale(1.1); filter: brightness(0.6) contrast(1.1); }
 }
 
-/* Dark gradient overlay so text remains readable over the image */
 .hero-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     background: radial-gradient(circle at center, transparent 0%, #030303 80%);
     z-index: -1;
 }
 
 .hero-content {
+    position: relative;
     text-align: center;
-    animation: float 12s ease-in-out infinite; /* Continuous breathing/floating effect */
+    padding: 0 1.5rem;
+    animation: float 12s ease-in-out infinite;
     z-index: 10;
 }
 
-/* The Shockwave Ring */
 .shockwave {
     position: absolute;
     top: 50%;
@@ -275,16 +340,14 @@ body.loading {
     width: 200px;
     height: 200px;
     border-radius: 50%;
-    border: 4px solid var(--accent); /* Same color as the theme */
+    border: 4px solid var(--accent);
     box-shadow: 0 0 50px var(--accent), inset 0 0 50px var(--accent);
-    opacity: 0; /* Hidden initially */
+    opacity: 0;
     pointer-events: none;
-    z-index: -1; /* Behind the text */
+    z-index: -1;
 }
 
-/* Activated by JS when button is pressed */
 .shockwave.explode {
-    /* Increased from 2s to 4s to make it disappear slower */
     animation: blast 4s cubic-bezier(0.1, 1, 0.3, 1) forwards;
 }
 
@@ -302,47 +365,78 @@ body.loading {
 }
 
 @keyframes float {
-    0% { transform: translateY(0px); }
+    0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-10px); }
-    100% { transform: translateY(0px); }
 }
 
-/* Your massive name text */
 .hero-title {
     font-family: var(--font-heading);
-    font-size: clamp(2rem, 5vw, 4rem); /* Reduced significantly */
+    font-size: clamp(2rem, 6vw, 4.5rem);
     line-height: 1;
     font-weight: 700;
     display: flex;
     flex-direction: column;
-    perspective: 1000px; /* Required for the 3D rotation entrance effect */
 }
 
-/* Adds a continuous metallic shine effect to the text */
 .hero-title .line {
     display: block;
     background: linear-gradient(90deg, #E1D9C1 0%, #888888 50%, #E1D9C1 100%);
     background-size: 200% auto;
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: shine 8s linear infinite;
 }
 
 @keyframes shine {
-    to {
-        background-position: 200% center;
-    }
+    to { background-position: 200% center; }
 }
 
 .hero-subtitle {
     margin-top: 2rem;
-    font-size: 1.2rem;
-    letter-spacing: 4px;
+    font-size: 1.1rem;
+    letter-spacing: 6px;
     color: var(--text-color);
-    opacity: 0.8;
+    opacity: 0.85;
 }
 
-/* The little animated scroll indicator at the bottom */
+.hero-tagline {
+    margin-top: 0.75rem;
+    font-size: 1rem;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+}
+
+/* Entrance: hidden until the preloader opens, then the title rushes forward */
+.js .hero-title {
+    opacity: 0;
+    transform: scale(0.5);
+}
+
+.js .hero-subtitle,
+.js .hero-tagline {
+    opacity: 0;
+    transform: translateY(12px);
+}
+
+.hero.revealed .hero-title {
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 2.5s var(--ease-out), transform 3s var(--ease-out);
+}
+
+.hero.revealed .hero-subtitle {
+    opacity: 0.85;
+    transform: none;
+    transition: opacity 1.2s var(--ease-out) 0.9s, transform 1.2s var(--ease-out) 0.9s;
+}
+
+.hero.revealed .hero-tagline {
+    opacity: 1;
+    transform: none;
+    transition: opacity 1.2s var(--ease-out) 1.2s, transform 1.2s var(--ease-out) 1.2s;
+}
+
 .scroll-indicator {
     position: absolute;
     bottom: 2rem;
@@ -353,6 +447,8 @@ body.loading {
     align-items: center;
     gap: 1rem;
     opacity: 0.6;
+    text-decoration: none;
+    color: var(--text-color);
 }
 
 .scroll-indicator span {
@@ -368,7 +464,6 @@ body.loading {
     overflow: hidden;
 }
 
-/* The moving line animation inside the indicator */
 .scroll-indicator .line::after {
     content: '';
     position: absolute;
@@ -385,141 +480,165 @@ body.loading {
     100% { top: 100%; }
 }
 
-/* 
+/*
 =====================================================
-   GENERAL LAYOUT UTILITIES
+   GENERAL LAYOUT
 =====================================================
 */
 .container {
     max-width: 1400px;
-    margin: 0 auto; /* Centers the container */
+    margin: 0 auto;
     padding: 0 4rem;
 }
 
 section {
-    padding: 8rem 0; /* Huge padding for cinematic whitespace */
+    padding: 8rem 0;
 }
 
-/* 
+.section-heading {
+    margin-bottom: 5rem;
+}
+
+.section-heading h2 {
+    font-family: var(--font-heading);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    margin-bottom: 1rem;
+}
+
+.section-heading p {
+    color: var(--text-muted);
+    font-size: 1.15rem;
+}
+
+/*
 =====================================================
-   MANIFESTO / ABOUT SECTION
+   ABOUT (MANIFESTO)
 =====================================================
 */
 .manifesto {
     padding: 12rem 0;
-    background-color: var(--bg-color);
     position: relative;
 }
 
 .manifesto-container {
     display: flex;
     align-items: center;
-    gap: 4rem;
+    gap: 5rem;
 }
 
 .anim-text {
     opacity: 0;
     transform: translateY(30px);
-    transition: all 2s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 1.6s var(--ease-out), transform 1.6s var(--ease-out);
 }
 
-.profile-photo-wrapper.visible {
-    transform: translateY(0);
+.anim-text.visible {
     opacity: 1;
+    transform: none;
+}
+
+.profile-photo-wrapper {
+    flex-shrink: 0;
 }
 
 .profile-photo {
+    display: block;
     width: 300px;
     height: 300px;
     object-fit: cover;
     border-radius: 50%;
-    border: 2px solid transparent;
-    transition: all 1.5s ease;
+    border: 1px solid var(--hairline);
+    filter: grayscale(0.35) contrast(1.05);
+    transition: filter 1s ease, border-color 1s ease, box-shadow 1s ease;
 }
 
-.profile-photo:hover {
-    border-color: var(--accent);
-    box-shadow: 0 0 20px rgba(225, 217, 193, 0.2);
+@media (hover: hover) {
+    .profile-photo:hover {
+        filter: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 30px rgba(225, 217, 193, 0.2);
+    }
 }
 
 .manifesto-title {
     font-family: var(--font-heading);
-    font-size: 1.5rem; /* Reduced from 2rem */
+    font-size: clamp(1.2rem, 2.4vw, 1.6rem);
+    line-height: 1.35;
     margin-bottom: 2rem;
-    color: var(--text-muted);
+    color: var(--text-color);
 }
 
-/* The large text block that fades in (handled by JS Intersection Observer) */
 .manifesto-text {
-    font-size: 1.2rem; /* Normal readable text size */
-    line-height: 1.6;
-    max-width: 700px;
-    transform: translateY(50px); /* Starts pushed down */
-    opacity: 0; /* Starts invisible */
-    transition: all 2.5s cubic-bezier(0.16, 1, 0.3, 1);
-    transition-delay: 0.2s; /* Slightly delayed after the photo */
+    font-size: 1.2rem;
+    line-height: 1.7;
+    max-width: 680px;
+    transition-delay: 0.15s;
 }
 
-/* Class added by Javascript when the element scrolls into view */
-.manifesto-text.visible {
-    transform: translateY(0);
-    opacity: 1;
+.manifesto-aside {
+    margin-top: 1.5rem;
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    transition-delay: 0.3s;
 }
 
-/* 
+/*
 =====================================================
-   CASES / PROJECTS SECTION
+   STACK
 =====================================================
 */
-.section-heading {
-    margin-bottom: 6rem;
+.stack {
+    border-top: 1px solid var(--hairline);
 }
 
-.section-heading h2 {
+.stack-list {
+    border-top: 1px solid var(--hairline);
+}
+
+.stack-row {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 2rem;
+    align-items: baseline;
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--hairline);
+}
+
+.stack-row dt {
     font-family: var(--font-heading);
-    font-size: 2rem;
-    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    letter-spacing: 3px;
+    color: var(--text-muted);
 }
 
-.section-heading p {
-    color: var(--text-muted);
-    font-size: 1.2rem;
+.stack-row dd {
+    font-size: 1.3rem;
+    line-height: 1.5;
+}
+
+/*
+=====================================================
+   WORK & EXPERIENCE ROWS
+=====================================================
+*/
+#experience {
+    border-top: 1px solid var(--hairline);
 }
 
 .cases-list {
-    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Subtle top line */
-}
-
-/* Individual project row styling */
-.case-text-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.case-desc {
-    font-family: var(--font-body);
-    color: var(--text-muted);
-    font-size: 0.95rem;
-    line-height: 1.5;
-    max-width: 600px;
+    border-top: 1px solid var(--hairline);
 }
 
 .case-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 2rem;
     padding: 3rem 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    text-decoration: none;
+    border-bottom: 1px solid var(--hairline);
     color: var(--text-color);
     position: relative;
-    transition: padding-left 0.5s ease; /* Smooth indent on hover */
-}
-
-.case-item:hover {
-    padding-left: 2rem; /* Indents the text slightly */
-    color: #fff;
+    transition: padding-left 0.6s var(--ease-out);
 }
 
 .case-details {
@@ -530,60 +649,101 @@ section {
     z-index: 2;
 }
 
+.case-text-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
 .case-num {
-    font-family: var(--font-body);
     color: var(--text-muted);
     font-size: 1.1rem;
+    font-variant-numeric: tabular-nums;
 }
 
 .case-name {
     font-family: var(--font-heading);
-    font-size: 1.5rem;
-    text-transform: uppercase;
+    font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+    font-weight: 400;
+}
+
+.case-name a {
+    text-decoration: none;
+}
+
+/* Stretches the title link over the whole row, so the row is the click target */
+.case-name a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+}
+
+.case-desc {
+    color: var(--text-muted);
+    font-size: 0.98rem;
+    line-height: 1.6;
+    max-width: 620px;
+}
+
+.case-tags {
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    color: var(--text-color);
+    opacity: 0.7;
 }
 
 .case-date {
-    font-family: var(--font-body);
     color: var(--text-muted);
+    font-size: 0.9rem;
+    white-space: nowrap;
     z-index: 2;
 }
 
-/* The floating background image that appears on hover */
 .case-image-hover {
     position: absolute;
     top: 50%;
     right: 20%;
-    transform: translateY(-50%) scale(0.8); /* Starts slightly scaled down */
+    transform: translateY(-50%) scale(0.85);
     width: 400px;
     height: 250px;
     background-size: cover;
     background-position: center;
-    opacity: 0; /* Hidden by default */
-    pointer-events: none; /* User clicks pass through it */
-    transition: all 1s ease-out; /* Smooth but much faster appearance */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s var(--ease-out), transform 0.8s var(--ease-out);
     z-index: 1;
 }
 
-.case-item:hover .case-image-hover {
-    opacity: 0.4; /* Fades in */
-    transform: translateY(-50%) scale(1); /* Pops to full size */
+@media (hover: hover) {
+    .case-item:hover {
+        padding-left: 2rem;
+    }
+
+    .case-item:hover .case-name {
+        color: #fff;
+    }
+
+    .case-item:hover .case-image-hover {
+        opacity: 0.35;
+        transform: translateY(-50%) scale(1);
+    }
 }
 
-/* 
+/*
 =====================================================
-   CONTACT SECTION
+   CONTACT
 =====================================================
 */
 .contact {
     padding: 10rem 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid var(--hairline);
 }
 
 .contact-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 4rem;
-    margin-top: 4rem;
 }
 
 .contact-column {
@@ -595,22 +755,25 @@ section {
 .contact-label {
     font-family: var(--font-heading);
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     letter-spacing: 2px;
 }
 
-.contact-text, .contact-link {
+.contact-text,
+.contact-link,
+.socials a {
     font-size: 1.2rem;
     color: var(--text-color);
     text-decoration: none;
-    transition: color 1s;
+    width: fit-content;
+    background: linear-gradient(currentColor, currentColor) left bottom / 0 1px no-repeat;
+    transition: background-size 0.5s var(--ease-out);
 }
 
-.contact-link:hover {
-    color: var(--accent);
+.contact-text {
+    background: none;
 }
 
-/* Social links styling */
 .socials {
     display: flex;
     flex-direction: column;
@@ -618,103 +781,243 @@ section {
 }
 
 .socials a {
-    color: var(--text-color);
-    text-decoration: none;
-    font-size: 1.1rem;
     letter-spacing: 2px;
-    transition: color 1s;
 }
 
-.socials a:hover {
-    color: var(--accent);
+.contact-link:focus-visible,
+.socials a:focus-visible {
+    background-size: 100% 1px;
 }
 
-/* 
+@media (hover: hover) {
+    .contact-link:hover,
+    .socials a:hover {
+        background-size: 100% 1px;
+    }
+}
+
+/*
 =====================================================
    FOOTER
 =====================================================
 */
 .footer {
     padding: 2rem 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid var(--hairline);
 }
 
 .footer-bottom {
     display: flex;
     justify-content: space-between;
+    gap: 1rem;
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     letter-spacing: 1px;
 }
 
-/* 
-=====================================================
-   MOBILE RESPONSIVENESS
-   (Adjusts styles for screens smaller than 768px)
-=====================================================
-*/
-@media (max-width: 768px) {
-    .header {
-        padding: 1.5rem;
-    }
-    .nav {
-        display: none; /* Hides top nav on very small screens */
-    }
-    .container {
-        padding: 0 2rem;
-    }
-    .manifesto-container {
-        flex-direction: column;
-        text-align: center;
-        gap: 2rem;
-    }
-    .profile-photo {
-        width: 200px;
-        height: 200px;
-    }
-    .contact-grid {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 3rem;
-    }
-    .case-image-hover {
-        display: none; /* Turn off hover images on mobile for performance/space */
-    }
-    .case-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-    }
-}
-
-/* 
+/*
 =====================================================
    CUSTOM CURSOR
 =====================================================
 */
-.cursor-dot {
-    width: 6px;
-    height: 6px;
-    background-color: var(--accent);
+.cursor-dot,
+.cursor-outline {
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
-    transform: translate(-50%, -50%);
     border-radius: 50%;
+    pointer-events: none;
+}
+
+html.has-cursor .cursor-dot,
+html.has-cursor .cursor-outline {
+    display: block;
+}
+
+.cursor-dot {
+    width: 6px;
+    height: 6px;
+    margin: -3px 0 0 -3px;
+    background-color: var(--accent);
     z-index: 99999;
-    pointer-events: none; /* Ensures we can click through it */
 }
 
 .cursor-outline {
     width: 40px;
     height: 40px;
+    margin: -20px 0 0 -20px;
     border: 1px solid rgba(225, 217, 193, 0.5);
-    position: fixed;
-    top: 0;
-    left: 0;
-    transform: translate(-50%, -50%);
-    border-radius: 50%;
     z-index: 99998;
-    pointer-events: none;
-    transition: width 1s ease, height 1s ease, background-color 1s ease;
+    transition: width 0.4s var(--ease-out), height 0.4s var(--ease-out), margin 0.4s var(--ease-out), background-color 0.4s ease;
+}
+
+.cursor-outline.hovering {
+    width: 60px;
+    height: 60px;
+    margin: -30px 0 0 -30px;
+    background-color: rgba(225, 217, 193, 0.1);
+}
+
+/*
+=====================================================
+   TABLET & MOBILE
+=====================================================
+*/
+@media (max-width: 1024px) {
+    .container {
+        padding: 0 2.5rem;
+    }
+
+    .header {
+        padding: 1.75rem 2.5rem;
+    }
+
+    .case-image-hover {
+        right: 5%;
+        width: 320px;
+        height: 200px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        padding: 1rem 1.5rem;
+        mix-blend-mode: normal;
+    }
+
+    .menu-toggle {
+        display: block;
+        z-index: 2;
+    }
+
+    /* Full-screen menu in the same cinematic voice */
+    .nav {
+        position: fixed;
+        inset: 0;
+        flex-direction: column;
+        justify-content: center;
+        gap: 2rem;
+        padding: 0 2rem;
+        background: var(--bg-color);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.5s var(--ease-out), visibility 0.5s;
+    }
+
+    .nav a {
+        font-family: var(--font-heading);
+        font-size: 1.4rem;
+        letter-spacing: 3px;
+        width: fit-content;
+    }
+
+    .menu-open .nav {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .container {
+        padding: 0 1.5rem;
+    }
+
+    section {
+        padding: 5rem 0;
+    }
+
+    .manifesto {
+        padding: 6rem 0;
+    }
+
+    .contact {
+        padding: 6rem 0;
+    }
+
+    .section-heading {
+        margin-bottom: 3rem;
+    }
+
+    .hero-subtitle {
+        letter-spacing: 4px;
+        font-size: 0.95rem;
+    }
+
+    .manifesto-container {
+        flex-direction: column;
+        text-align: center;
+        gap: 2.5rem;
+    }
+
+    .manifesto-text {
+        font-size: 1.05rem;
+    }
+
+    .profile-photo {
+        width: 180px;
+        height: 180px;
+    }
+
+    .stack-row {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+        padding: 1.5rem 0;
+    }
+
+    .stack-row dd {
+        font-size: 1.05rem;
+    }
+
+    .case-image-hover {
+        display: none;
+    }
+
+    .case-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 2rem 0;
+    }
+
+    .case-details {
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .case-num {
+        font-size: 0.9rem;
+        padding-top: 0.2rem;
+    }
+
+    .case-date {
+        white-space: normal;
+        font-size: 0.8rem;
+    }
+
+    .contact-grid {
+        gap: 2.5rem;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+    }
+}
+
+/*
+=====================================================
+   REDUCED MOTION
+=====================================================
+*/
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        transition-delay: 0s !important;
+    }
 }

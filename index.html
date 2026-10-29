@@ -3,190 +3,276 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mohammed Sowan | Parallel Universe</title>
-    
-    <!-- We are importing two Google Fonts here: 
-         'Syncopate' for the large, cinematic headings.
-         'Space Grotesk' for the body text and smaller details. -->
+    <title>Mohammed Sowan | Backend Engineer</title>
+    <meta name="description" content="Mohammed Sowan, backend engineer in Tripoli, Libya. Building banking and payment systems with C#, ASP.NET Core, Docker, RabbitMQ and Redis.">
+    <meta name="theme-color" content="#030303">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Mohammed Sowan | Backend Engineer">
+    <meta property="og:description" content="Building banking and payment systems with C#, ASP.NET Core, Docker, RabbitMQ and Redis.">
+    <meta property="og:image" content="https://github.com/Mo-Sowan.png">
+    <meta name="twitter:card" content="summary">
+
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+
+    <!-- 'Syncopate' for the cinematic headings, 'Space Grotesk' for body text -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Link to our main stylesheet for all the visual styling -->
-    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css?v=3">
+
+    <!-- Lets CSS hide the hero before its entrance animation, without a flash -->
+    <script>document.documentElement.classList.add('js');</script>
 </head>
-<!-- The 'loading' class prevents scrolling while the preloader is active -->
 <body class="loading">
-    <!-- CUSTOM CURSOR -->
-    <div class="cursor-dot" id="cursor-dot"></div>
-    <div class="cursor-outline" id="cursor-outline"></div>
-    
-    <!-- PRELOADER SECTION: 
-         An automated tech-themed preloader that fades out. -->
-    <div class="preload">
+    <a class="skip-link" href="#about">Skip to content</a>
+
+    <!-- CUSTOM CURSOR (only shown on devices with a precise mouse) -->
+    <div class="cursor-dot" id="cursor-dot" aria-hidden="true"></div>
+    <div class="cursor-outline" id="cursor-outline" aria-hidden="true"></div>
+
+    <!-- PRELOADER: types a line, then opens on its own; the button skips the wait -->
+    <div class="preload" aria-hidden="true">
         <div class="preload-content">
             <div class="typewriter">
-                <h2 id="loading-text"></h2>
+                <p id="loading-text"></p>
             </div>
-            <!-- The spinning circle element -->
             <div class="spinner"></div>
-            <!-- Manual entry button -->
-            <button id="enter-btn" class="enter-button">ENTER THE UNIVERSE</button>
+            <button id="enter-btn" class="enter-button" type="button" tabindex="-1">ENTER THE UNIVERSE</button>
         </div>
     </div>
 
-    <!-- HEADER NAVIGATION: 
-         This bar stays at the top of the screen as you scroll. -->
     <header class="header">
-        <a href="#" class="logo">M.SOWAN</a>
-        <!-- The navigation links to different sections of the page based on their ID (e.g. href="#about") -->
-        <nav class="nav">
+        <a href="#home" class="logo">M.SOWAN</a>
+        <nav class="nav" id="nav" aria-label="Main">
             <a href="#about">ABOUT</a>
+            <a href="#stack">STACK</a>
+            <a href="#work">WORK</a>
             <a href="#experience">EXPERIENCE</a>
             <a href="#contact">CONTACT</a>
         </nav>
+        <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav">
+            <span></span><span></span>
+        </button>
     </header>
 
-    <main data-scroll-container>
-        
-        <!-- HERO SECTION: 
-             This is the massive full-screen introduction. -->
+    <main>
+        <!-- HERO -->
         <section class="hero" id="home">
-            <!-- The hero-bg holds the abstract background image that slowly pulses -->
-            <div class="hero-bg"></div>
-            <!-- The hero-overlay adds a dark radial gradient so the white text is easy to read over the background -->
-            <div class="hero-overlay"></div>
-            
-            <div class="hero-content" style="position: relative;">
-                <!-- The shockwave ring effect -->
-                <div class="shockwave"></div>
+            <div class="hero-bg" aria-hidden="true"></div>
+            <div class="hero-overlay" aria-hidden="true"></div>
+
+            <div class="hero-content">
+                <div class="shockwave" aria-hidden="true"></div>
                 <h1 class="hero-title">
                     <span class="line">MOHAMMED</span>
                     <span class="line">SOWAN</span>
                 </h1>
-                <p class="hero-subtitle">ARCHITECT OF DIGITAL REALITIES</p>
+                <p class="hero-subtitle">BACKEND ENGINEER</p>
+                <p class="hero-tagline">Building banking &amp; payment systems in C# and .NET</p>
             </div>
-            
-            <!-- A subtle scroll indicator animation at the bottom to encourage the user to scroll down -->
-            <div class="scroll-indicator">
+
+            <a href="#about" class="scroll-indicator" aria-label="Scroll to about">
                 <span>SCROLL</span>
                 <div class="line"></div>
-            </div>
+            </a>
         </section>
 
-        <!-- MANIFESTO / ABOUT SECTION: 
-             A bold, philosophical statement instead of a standard 'About Me' text block. -->
+        <!-- ABOUT -->
         <section class="manifesto" id="about">
             <div class="container manifesto-container">
-                <!-- User Profile Photo -->
                 <div class="profile-photo-wrapper anim-text">
-                    <!-- Fetching the profile photo from GitHub since LinkedIn blocks direct image links -->
-                    <img src="https://github.com/Mo-Sowan.png" alt="Mohammed Sowan" class="profile-photo">
+                    <img src="https://github.com/Mo-Sowan.png" alt="Mohammed Sowan" class="profile-photo" width="300" height="300">
                 </div>
                 <div class="manifesto-content">
-                    <h2 class="manifesto-title">I am a highly motivated Libyan professional</h2>
-                    <!-- The 'anim-text' class triggers a fade-in animation when this text scrolls into view -->
+                    <h2 class="manifesto-title">I build the systems money moves through</h2>
                     <p class="manifesto-text anim-text">
-                        Based in Libya, I am a multi-disciplinary professional blending expertise in electrical engineering, software development, and education. Whether I am optimizing power systems in the energy sector, developing machine-learning applications, or mentoring the next generation, my work is defined by a relentless drive for excellence and a commitment to creating meaningful impact.
+                        I'm a backend engineer based in Tripoli, Libya, working on payment services used by multiple banks.
+                        I design APIs in C# and ASP.NET Core, connect services through RabbitMQ, cache with Redis and ship
+                        everything in Docker. My focus is systems that stay correct when the load goes up.
+                    </p>
+                    <p class="manifesto-text manifesto-aside anim-text">
+                        Before software I was an electrical engineer in the oil fields, and I still teach. Both taught me the
+                        same thing: reliability isn't a feature you add later.
                     </p>
                 </div>
             </div>
         </section>
 
-        <!-- EXPERIENCE SECTION: 
-             A sleek, minimalistic list of your professional roles. -->
-        <section class="cases" id="experience">
+        <!-- STACK: grouped by area -->
+        <section class="stack" id="stack">
             <div class="container">
                 <div class="section-heading">
-                    <h2>WORK EXPERIENCE</h2>
-                    <p>I found my Parallel Universe and am ready to share my professional journey with you.</p>
+                    <h2>STACK</h2>
+                    <p>The tools I reach for in production.</p>
                 </div>
-                
-                <!-- The container holding all the experience items -->
-                <div class="cases-list">
-                    
-                    <!-- Experience Item 1 -->
-                    <a href="#" class="case-item">
-                        <div class="case-image-hover" style="background-image: url('https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
-                        <div class="case-details">
-                            <span class="case-num">[01]</span>
-                            <div class="case-text-group">
-                                <span class="case-name">ELECTRICAL ENGINEER</span>
-                                <p class="case-desc">Spearhead the maintenance and troubleshooting of complex electrical systems in demanding oil field operations. My focus is on ensuring equipment reliability, strict safety compliance, and efficient power distribution to support continuous, optimized energy production.</p>
-                            </div>
-                        </div>
-                        <span class="case-date">// AKAKOS OIL OPERATION</span>
-                    </a>
-                    
-                    <!-- Experience Item 2 -->
-                    <a href="#" class="case-item">
-                        <div class="case-image-hover" style="background-image: url('https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
-                        <div class="case-details">
-                            <span class="case-num">[02]</span>
-                            <div class="case-text-group">
-                                <span class="case-name">ENGLISH TEACHER</span>
-                                <p class="case-desc">Deliver technical English and speaking-skills curriculum to professionals, notably within the National Oil Corporation's 7000+ program. I design custom lesson plans and lead dynamic classroom activities to empower adult learners.</p>
-                            </div>
-                        </div>
-                        <span class="case-date">// ALANDALUS CENTER</span>
-                    </a>
+                <dl class="stack-list">
+                    <div class="stack-row">
+                        <dt>BACKEND</dt>
+                        <dd>C# · ASP.NET Core · Entity Framework Core · REST APIs · JWT · xUnit</dd>
+                    </div>
+                    <div class="stack-row">
+                        <dt>MESSAGING</dt>
+                        <dd>RabbitMQ · Redis · Event-driven workflows</dd>
+                    </div>
+                    <div class="stack-row">
+                        <dt>DEVOPS</dt>
+                        <dd>Docker · Docker Compose · Git · Postman</dd>
+                    </div>
+                    <div class="stack-row">
+                        <dt>DATABASES</dt>
+                        <dd>SQL Server · <span class="todo">[TODO: other databases you use]</span></dd>
+                    </div>
+                </dl>
+            </div>
+        </section>
 
-                    <!-- Experience Item 3 -->
-                    <a href="#" class="case-item">
-                        <div class="case-image-hover" style="background-image: url('https://images.unsplash.com/photo-1544531586-fde5298cdd40?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+        <!-- SELECTED WORK -->
+        <section class="cases" id="work">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>SELECTED WORK</h2>
+                    <p>Things I've built outside the day job.</p>
+                </div>
+
+                <div class="cases-list">
+                    <article class="case-item">
+                        <div class="case-image-hover" aria-hidden="true" style="background-image: url('https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=800&q=70');"></div>
                         <div class="case-details">
-                            <span class="case-num">[03]</span>
                             <div class="case-text-group">
-                                <span class="case-name">TRAINER OF TRAINERS</span>
-                                <p class="case-desc">Lead the Youth Empowerment Program by instructing fellow trainers and directly coordinating the safety protocol education of over 3,000 primary school students, driving community impact.</p>
+                                <h3 class="case-name">INVESTLY</h3>
+                                <p class="case-desc">An investment platform. I built the ASP.NET Core API (auth, investments, portfolio summaries, admin) plus the mobile app and admin dashboard. <span class="todo">[TODO: the problem it solves, and an outcome]</span></p>
+                                <p class="case-tags">ASP.NET Core · EF Core · SQL Server · JWT · Docker Compose · React Native · Next.js</p>
                             </div>
                         </div>
-                        <span class="case-date">// MOOMKEN ORG</span>
-                    </a>
-                    
-                    <!-- Experience Item 4 -->
-                    <a href="#" class="case-item">
-                        <div class="case-image-hover" style="background-image: url('https://images.unsplash.com/photo-1466611653911-95081537e5b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <span class="case-date">// PERSONAL PROJECT</span>
+                    </article>
+
+                    <article class="case-item">
+                        <div class="case-image-hover" aria-hidden="true" style="background-image: url('https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=800&q=70');"></div>
                         <div class="case-details">
-                            <span class="case-num">[04]</span>
                             <div class="case-text-group">
-                                <span class="case-name">ENERGY AMBASSADOR</span>
-                                <p class="case-desc">Selected by the Ministry of Oil and Gas for the Energy Jeel Initiative. Undergoing specialized technical training in advanced oilfield technology and safety protocols to champion sustainable energy practices.</p>
+                                <h3 class="case-name"><a href="https://github.com/Mo-Sowan/tilawa-hifdh" target="_blank" rel="noopener">TILAWA HIFDH <span aria-hidden="true">↗</span></a></h3>
+                                <p class="case-desc">Follow along with Quran recitation and track memorization, fully offline. A Flutter app with an on-device speech recognizer (FastConformer CTC on ONNX) and an ASP.NET Core API.</p>
+                                <p class="case-tags">ASP.NET Core · Flutter · ONNX</p>
                             </div>
                         </div>
-                        <span class="case-date">// JEEL INITIATIVE</span>
-                    </a>
-                    
+                        <span class="case-date">// OPEN SOURCE</span>
+                    </article>
+
+                    <article class="case-item">
+                        <div class="case-image-hover" aria-hidden="true" style="background-image: url('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=800&q=70');"></div>
+                        <div class="case-details">
+                            <div class="case-text-group">
+                                <h3 class="case-name">MIZAN</h3>
+                                <p class="case-desc">A secure university exam platform: offline-capable and Arabic-first. <span class="todo">[TODO: your role and an outcome]</span></p>
+                                <p class="case-tags">C# · .NET · <span class="todo">[TODO: rest of stack]</span></p>
+                            </div>
+                        </div>
+                        <span class="case-date">// EXAM PLATFORM</span>
+                    </article>
                 </div>
             </div>
         </section>
 
-        <!-- CONTACT SECTION: 
-             A detailed and balanced footer area for communication. -->
+        <!-- EXPERIENCE: newest first -->
+        <section class="cases" id="experience">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>WORK EXPERIENCE</h2>
+                    <p>From power systems to payment systems.</p>
+                </div>
+
+                <ol class="cases-list">
+                    <li class="case-item">
+                        <div class="case-image-hover" aria-hidden="true" style="background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=70');"></div>
+                        <div class="case-details">
+                            <span class="case-num">[01]</span>
+                            <div class="case-text-group">
+                                <h3 class="case-name">BACKEND DEVELOPER</h3>
+                                <p class="case-desc">Build and maintain backend services for payment and banking products used by multiple banks, with C#, ASP.NET Core, Docker, RabbitMQ and Redis. <span class="todo">[TODO: 2–3 concrete results]</span></p>
+                            </div>
+                        </div>
+                        <span class="case-date">// FINTECH · <span class="todo">[TODO: years]</span></span>
+                    </li>
+
+                    <li class="case-item">
+                        <div class="case-image-hover" aria-hidden="true" style="background-image: url('https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?auto=format&fit=crop&w=800&q=70');"></div>
+                        <div class="case-details">
+                            <span class="case-num">[02]</span>
+                            <div class="case-text-group">
+                                <h3 class="case-name">ELECTRICAL ENGINEER</h3>
+                                <p class="case-desc">Maintained and troubleshot complex electrical systems in demanding oil field operations, focused on equipment reliability, strict safety compliance and efficient power distribution.</p>
+                            </div>
+                        </div>
+                        <span class="case-date">// AKAKOS OIL OPERATION</span>
+                    </li>
+
+                    <li class="case-item">
+                        <div class="case-image-hover" aria-hidden="true" style="background-image: url('https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=800&q=70');"></div>
+                        <div class="case-details">
+                            <span class="case-num">[03]</span>
+                            <div class="case-text-group">
+                                <h3 class="case-name">ENGLISH TEACHER</h3>
+                                <p class="case-desc">Teach technical English and speaking skills to professionals, notably within the National Oil Corporation's 7000+ program.</p>
+                            </div>
+                        </div>
+                        <span class="case-date">// ALANDALUS CENTER</span>
+                    </li>
+
+                    <li class="case-item">
+                        <div class="case-image-hover" aria-hidden="true" style="background-image: url('https://images.unsplash.com/photo-1544531586-fde5298cdd40?auto=format&fit=crop&w=800&q=70');"></div>
+                        <div class="case-details">
+                            <span class="case-num">[04]</span>
+                            <div class="case-text-group">
+                                <h3 class="case-name">TRAINER OF TRAINERS</h3>
+                                <p class="case-desc">Led the Youth Empowerment Program, training fellow trainers and coordinating safety education for over 3,000 primary school students.</p>
+                            </div>
+                        </div>
+                        <span class="case-date">// MOOMKEN ORG</span>
+                    </li>
+
+                    <li class="case-item">
+                        <div class="case-image-hover" aria-hidden="true" style="background-image: url('https://images.unsplash.com/photo-1466611653911-95081537e5b7?auto=format&fit=crop&w=800&q=70');"></div>
+                        <div class="case-details">
+                            <span class="case-num">[05]</span>
+                            <div class="case-text-group">
+                                <h3 class="case-name">ENERGY AMBASSADOR</h3>
+                                <p class="case-desc">Selected by the Ministry of Oil and Gas for the Energy Jeel Initiative: specialized training in oilfield technology and safety.</p>
+                            </div>
+                        </div>
+                        <span class="case-date">// JEEL INITIATIVE</span>
+                    </li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- CONTACT -->
         <section class="contact" id="contact">
             <div class="container">
                 <div class="section-heading">
                     <h2>LET'S CONNECT</h2>
-                    <p>Whether you have a question, a project idea, or just want to say hi, I'd love to hear from you.</p>
+                    <p>Backend roles, fintech problems, or just a hello. Email reaches me fastest.</p>
                 </div>
-                
+
                 <div class="contact-grid">
                     <div class="contact-column">
                         <span class="contact-label">LOCATION</span>
                         <p class="contact-text">Tripoli, Libya</p>
                     </div>
-                    
+
                     <div class="contact-column">
                         <span class="contact-label">GET IN TOUCH</span>
                         <a href="mailto:msowan89@gmail.com" class="contact-link">msowan89@gmail.com</a>
-                        <a href="tel:+2180911349994" class="contact-link">+218 0911349994</a>
+                        <a href="tel:+218911349994" class="contact-link">+218 91 134 9994</a>
                     </div>
-                    
+
                     <div class="contact-column">
                         <span class="contact-label">SOCIALS</span>
                         <div class="socials">
-                            <a href="https://www.linkedin.com/in/mohammed-sowan-50a325237/" target="_blank">LINKEDIN</a>
-                            <a href="https://github.com/Mo-Sowan" target="_blank">GITHUB</a>
+                            <a href="https://www.linkedin.com/in/mohammed-sowan-50a325237/" target="_blank" rel="noopener">LINKEDIN ↗</a>
+                            <a href="https://github.com/Mo-Sowan" target="_blank" rel="noopener">GITHUB ↗</a>
                         </div>
                     </div>
                 </div>
@@ -194,17 +280,15 @@
         </section>
     </main>
 
-    <!-- FOOTER: Copyright info at the very bottom -->
     <footer class="footer">
         <div class="container">
             <div class="footer-bottom">
-                <span>© 2026 MOHAMMED SOWAN</span>
-                <span>SOFTWARE ARCHITECT</span>
+                <span>© <span id="year">2026</span> MOHAMMED SOWAN</span>
+                <span>BACKEND ENGINEER</span>
             </div>
         </div>
     </footer>
 
-    <!-- This script handles the preloader button, scroll animations, and parallax effect -->
-    <script src="script.js"></script>
+    <script src="script.js?v=3"></script>
 </body>
 </html>
