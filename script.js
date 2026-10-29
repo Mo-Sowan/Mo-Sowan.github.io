@@ -21,88 +21,58 @@ document.addEventListener('DOMContentLoaded', () => {
     const textToType = 'INITIALIZING PORTFOLIO...';
     let entered = false;
 
-    // Cinematic entrance sound, synthesized with Web Audio (no audio file to download).
-    // A rising whoosh, an impact as the name lands with the shockwave, then a bright chord.
-    // Pitched so laptop and phone speakers can play it, not just headphones.
+    // Entrance sound: a water drop, synthesized with Web Audio (no audio file to download).
+    // It lands as the name appears and the shockwave ring spreads like a ripple,
+    // with a softer second drop as the ring fades.
     function playEntranceSound() {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         if (!AudioCtx) return;
 
         const audio = new AudioCtx();
         audio.resume();
-        const now = audio.currentTime;
-        const impact = now + 0.35; // matches the 300ms delay before the hero reveal
+        const impact = audio.currentTime + 0.35; // matches the 300ms delay before the hero reveal
 
-        const master = audio.createGain();
-        master.gain.value = 1;
-        const limiter = audio.createDynamicsCompressor();
-        limiter.threshold.value = -10;
-        master.connect(limiter).connect(audio.destination);
-
-        function noiseBuffer(seconds) {
-            const buffer = audio.createBuffer(1, audio.sampleRate * seconds, audio.sampleRate);
-            const samples = buffer.getChannelData(0);
-            for (let i = 0; i < samples.length; i++) samples[i] = Math.random() * 2 - 1;
-            return buffer;
+        // Room echo: a short decaying-noise impulse gives the drop a sense of space
+        const echo = audio.createConvolver();
+        const tail = audio.createBuffer(2, audio.sampleRate * 2.5, audio.sampleRate);
+        for (let ch = 0; ch < 2; ch++) {
+            const samples = tail.getChannelData(ch);
+            for (let i = 0; i < samples.length; i++) {
+                samples[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / samples.length, 3);
+            }
         }
+        echo.buffer = tail;
 
-        function envelope(gainNode, start, peak, attack, release) {
-            gainNode.gain.setValueAtTime(0.0001, start);
-            gainNode.gain.exponentialRampToValueAtTime(peak, start + attack);
-            gainNode.gain.exponentialRampToValueAtTime(0.0001, start + attack + release);
-        }
+        const dry = audio.createGain();
+        dry.gain.value = 0.8;
+        const wet = audio.createGain();
+        wet.gain.value = 0.45;
+        dry.connect(audio.destination);
+        echo.connect(wet).connect(audio.destination);
 
-        // Whoosh: noise sweeping upward into the impact
-        const whoosh = audio.createBufferSource();
-        whoosh.buffer = noiseBuffer(2);
-        const sweep = audio.createBiquadFilter();
-        sweep.type = 'bandpass';
-        sweep.Q.value = 0.9;
-        sweep.frequency.setValueAtTime(400, now);
-        sweep.frequency.exponentialRampToValueAtTime(4500, impact);
-        sweep.frequency.exponentialRampToValueAtTime(500, impact + 1.4);
-        const whooshGain = audio.createGain();
-        envelope(whooshGain, now, 0.6, 0.35, 1.4);
-        whoosh.connect(sweep).connect(whooshGain).connect(master);
-        whoosh.start(now);
-
-        // Impact: a falling tone plus an overtone an octave up that small speakers can reproduce
-        [['sine', 180, 48, 1.0], ['triangle', 360, 96, 0.45]].forEach(([type, from, to, peak]) => {
+        // A drop is a short sine whose pitch rises quickly as the bubble collapses
+        function drop(at, from, to, volume) {
             const osc = audio.createOscillator();
-            osc.type = type;
-            osc.frequency.setValueAtTime(from, impact);
-            osc.frequency.exponentialRampToValueAtTime(to, impact + 1.2);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(from, at);
+            osc.frequency.exponentialRampToValueAtTime(to, at + 0.07);
+
             const gain = audio.createGain();
-            envelope(gain, impact, peak, 0.01, 1.6);
-            osc.connect(gain).connect(master);
-            osc.start(impact);
-            osc.stop(impact + 1.8);
-        });
+            gain.gain.setValueAtTime(0.0001, at);
+            gain.gain.exponentialRampToValueAtTime(volume, at + 0.004);
+            gain.gain.exponentialRampToValueAtTime(0.0001, at + 0.22);
 
-        // Thump: a short burst of noise for the hit's attack
-        const thump = audio.createBufferSource();
-        thump.buffer = noiseBuffer(0.4);
-        const thumpFilter = audio.createBiquadFilter();
-        thumpFilter.type = 'lowpass';
-        thumpFilter.frequency.value = 1500;
-        const thumpGain = audio.createGain();
-        envelope(thumpGain, impact, 0.7, 0.005, 0.3);
-        thump.connect(thumpFilter).connect(thumpGain).connect(master);
-        thump.start(impact);
+            osc.connect(gain);
+            gain.connect(dry);
+            gain.connect(echo);
+            osc.start(at);
+            osc.stop(at + 0.25);
+        }
 
-        // Chord: a bright A-major shimmer that rings out as the name settles
-        [440, 554.37, 659.25, 880].forEach((freq, i) => {
-            const tone = audio.createOscillator();
-            tone.type = 'triangle';
-            tone.frequency.value = freq;
-            const gain = audio.createGain();
-            envelope(gain, impact + 0.05, 0.14 / (1 + i * 0.5), 0.35, 3.2);
-            tone.connect(gain).connect(master);
-            tone.start(impact + 0.05);
-            tone.stop(impact + 3.8);
-        });
+        drop(impact, 520, 1650, 0.55);
+        drop(impact + 0.55, 680, 2100, 0.18);
 
-        setTimeout(() => audio.close(), 5000);
+        setTimeout(() => audio.close(), 4000);
     }
 
     function enter() {
