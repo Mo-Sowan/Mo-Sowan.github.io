@@ -21,61 +21,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const textToType = 'INITIALIZING PORTFOLIO...';
     let entered = false;
 
-    // Entrance sound: one deep water drop, synthesized with Web Audio (no audio file to download).
-    // It lands as the name appears, and its echo fades over the same 4s the shockwave ring
-    // takes to spread out and vanish.
+    // Entrance sound: a real water-drop recording (sounds/water-drop.mp3), decoded ahead of
+    // time and scheduled to land exactly as the name and shockwave appear.
+    // If the file is missing, the entrance simply plays silently.
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    const audio = AudioCtx ? new AudioCtx() : null;
+    let dropSound = null;
+
+    if (audio) {
+        fetch('sounds/water-drop.mp3')
+            .then((response) => (response.ok ? response.arrayBuffer() : Promise.reject()))
+            .then((data) => audio.decodeAudioData(data))
+            .then((buffer) => { dropSound = buffer; })
+            .catch(() => {});
+    }
+
     function playEntranceSound() {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (!AudioCtx) return;
-
-        const audio = new AudioCtx();
-        audio.resume();
-        const impact = audio.currentTime + 0.35; // matches the 300ms delay before the hero reveal
-        const ringDuration = 4;                   // matches the shockwave 'blast' animation
-
-        // Cavern echo: a long, dark tail that dies away with the ring
-        const echo = audio.createConvolver();
-        const tail = audio.createBuffer(2, audio.sampleRate * ringDuration, audio.sampleRate);
-        for (let ch = 0; ch < 2; ch++) {
-            const samples = tail.getChannelData(ch);
-            for (let i = 0; i < samples.length; i++) {
-                samples[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / samples.length, 2.5);
-            }
-        }
-        echo.buffer = tail;
-
-        const darken = audio.createBiquadFilter();
-        darken.type = 'lowpass';
-        darken.frequency.value = 1400;
-
-        const dry = audio.createGain();
-        dry.gain.value = 0.75;
-        const wet = audio.createGain();
-        wet.gain.value = 0.7;
-        dry.connect(audio.destination);
-        echo.connect(darken).connect(wet).connect(audio.destination);
-
-        // The drop: a low tone whose pitch swoops up as the bubble closes.
-        // A quiet overtone an octave up lets laptop and phone speakers carry it.
-        [[1, 0.8], [2, 0.18]].forEach(([multiple, volume]) => {
-            const osc = audio.createOscillator();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(150 * multiple, impact);
-            osc.frequency.exponentialRampToValueAtTime(460 * multiple, impact + 0.14);
-
-            const gain = audio.createGain();
-            gain.gain.setValueAtTime(0.0001, impact);
-            gain.gain.exponentialRampToValueAtTime(volume, impact + 0.006);
-            gain.gain.exponentialRampToValueAtTime(0.0001, impact + 0.6);
-
-            osc.connect(gain);
-            gain.connect(dry);
-            gain.connect(echo);
-            osc.start(impact);
-            osc.stop(impact + 0.65);
-        });
-
-        setTimeout(() => audio.close(), (ringDuration + 1) * 1000);
+        if (!audio || !dropSound) return;
+        audio.resume(); // browsers only allow sound after a click, which this is
+        const source = audio.createBufferSource();
+        source.buffer = dropSound;
+        source.connect(audio.destination);
+        source.start(audio.currentTime + 0.3); // the same 300ms delay as the hero reveal below
     }
 
     function enter() {
