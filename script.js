@@ -29,11 +29,81 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Cinematic entrance sound, synthesized with Web Audio (no audio file to download).
+    // A rising whoosh, then a deep boom and a soft chord as the name lands with the shockwave.
+    function playEntranceSound() {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+
+        const audio = new AudioCtx();
+        const now = audio.currentTime;
+        const impact = now + 0.35; // matches the 300ms delay before the hero reveal
+
+        const master = audio.createGain();
+        master.gain.value = 0.8;
+        const limiter = audio.createDynamicsCompressor();
+        master.connect(limiter).connect(audio.destination);
+
+        // Whoosh: filtered noise sweeping upward into the impact
+        const noiseBuffer = audio.createBuffer(1, audio.sampleRate * 2.5, audio.sampleRate);
+        const samples = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < samples.length; i++) samples[i] = Math.random() * 2 - 1;
+
+        const noise = audio.createBufferSource();
+        noise.buffer = noiseBuffer;
+        const sweep = audio.createBiquadFilter();
+        sweep.type = 'bandpass';
+        sweep.Q.value = 1.2;
+        sweep.frequency.setValueAtTime(250, now);
+        sweep.frequency.exponentialRampToValueAtTime(2400, impact);
+        sweep.frequency.exponentialRampToValueAtTime(300, now + 2.2);
+        const noiseGain = audio.createGain();
+        noiseGain.gain.setValueAtTime(0.0001, now);
+        noiseGain.gain.exponentialRampToValueAtTime(0.35, impact);
+        noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 2.2);
+        noise.connect(sweep).connect(noiseGain).connect(master);
+        noise.start(now);
+        noise.stop(now + 2.5);
+
+        // Boom: a sine that drops in pitch, felt more than heard
+        const boom = audio.createOscillator();
+        boom.type = 'sine';
+        boom.frequency.setValueAtTime(110, impact);
+        boom.frequency.exponentialRampToValueAtTime(32, impact + 1.6);
+        const boomGain = audio.createGain();
+        boomGain.gain.setValueAtTime(0.0001, impact);
+        boomGain.gain.exponentialRampToValueAtTime(0.9, impact + 0.02);
+        boomGain.gain.exponentialRampToValueAtTime(0.0001, impact + 2);
+        boom.connect(boomGain).connect(master);
+        boom.start(impact);
+        boom.stop(impact + 2.1);
+
+        // Chord: a soft, slowly fading pad as the name settles
+        [220, 329.63, 440, 659.25].forEach((freq, i) => {
+            const tone = audio.createOscillator();
+            tone.type = 'sine';
+            tone.frequency.value = freq;
+            const toneGain = audio.createGain();
+            toneGain.gain.setValueAtTime(0.0001, impact);
+            toneGain.gain.exponentialRampToValueAtTime(0.06 / (i + 1), impact + 0.6);
+            toneGain.gain.exponentialRampToValueAtTime(0.0001, impact + 4);
+            tone.connect(toneGain).connect(master);
+            tone.start(impact);
+            tone.stop(impact + 4.1);
+        });
+
+        setTimeout(() => audio.close(), 5000);
+    }
+
     function enter() {
         if (entered) return;
         entered = true;
         try {
             sessionStorage.setItem('entered', '1');
+        } catch (e) {}
+
+        try {
+            playEntranceSound();
         } catch (e) {}
 
         preload.classList.add('hidden');
@@ -273,6 +343,4 @@ document.addEventListener('DOMContentLoaded', () => {
             outline.classList.toggle('hovering', !!e.target.closest('a, button, .case-item'));
         });
     }
-
-    document.getElementById('year').textContent = new Date().getFullYear();
 });
